@@ -50,4 +50,5 @@ api:
   file: pipeimob-api-pipeimob-v10-1.0.0-resolved.yaml
   operationId: auth
 hidden: false
+icon: 👉
 ---
