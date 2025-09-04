@@ -1,0 +1,8 @@
+---
+title: Recuperar Agências
+excerpt: "### **📄\_ Descrição**\n\nEssa rota retorna a lista de agências vinculadas a uma franqueadora ou parceiro autorizado. Ela é restrita: **não pode ser acessada diretamente por agências**.\n\nO objetivo principal é fornecer uma visão centralizada das agências da rede, com metadados relevantes para análise e controle da franqueadora — incluindo configurações específicas de **royalties** aplicados a cada tipo de transação: _lançamento_, _terceiros_ e _locação_.\n\n### **🔐\_Permissões**\n\n- **Acesso permitido somente para:**\n    \n    - Usuários com perfil de **Franqueadora**.\n        \n    - **Parceiros externos** homologados.\n        \n    \n\n### **📥\_ Parâmetros**\n\nNenhum parâmetro é necessário para a requisição.\n\n### **📤\_ Resposta**\n\nO retorno é um objeto JSON contendo:\n\n- tipoUser: identifica o tipo de usuário que fez a requisição (\"franquia\" ou outro parceiro autorizado).\n    \n- agencias_count: total de agências retornadas.\n    \n- agencias: array com os dados de cada agência, incluindo:\n    \n    - nome: Nome da agência.\n        \n    - rede: Nome da rede à qual a agência pertence.\n        \n    - slug: Identificador único no sistema.\n        \n    - prefixo_codigo_contrato: Código usado na composição dos contratos.\n        \n    - uniqueid: Identificador único no banco de dados.\n        \n    - royalties: Objeto com os percentuais configurados para lancamento, terceiros e locacao."
+api:
+  file: pipeimob-api-pipeimob-v10-1.0.0-resolved.yaml
+  operationId: recuperarAgNcias
+hidden: false
+---

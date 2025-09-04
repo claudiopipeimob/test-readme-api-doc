@@ -1,0 +1,3176 @@
+openapi: 3.0.3
+info:
+  title: API PipeImob v1.0
+  description: >-
+
+
+    [www.pipeimob.com.br](https://pipeimob.com.br)
+
+
+    Aqui você tem acesso a todas as informações da coleção de chamadas
+    (endpoints) para a **API PIPEIMOB versão 1.0**, que fornece serviços de
+    apoio para integrar os serviços oferecidos por nossa plataforma, aos seus
+    aplicativos.
+
+
+    A **API PIPEIMOB v1.0** está implementada em conformidade com o princípio de
+    design REST. Nossa API possui recursos orientados a URLs, com códigos HTTP
+    para indicar erros.
+
+
+    Utilizamos funcionalidades HTTP nativas, como verbos de ação POST, PUT, GET,
+    DELETE, para operações de leitura e escrita, bem como o modelo básico de
+    autenticação HTTP.
+
+
+    Suportamos chamadas diretas aos recursos/endpoints da API a partir de outras
+    origens, CORS (cross-origin resource sharing), permitindo você interagir de
+    maneira segura com nossas APIs a partir de aplicações web. Todas as
+    respostas da API estão no formato de dados JSON, incluindo erros.
+
+
+    ### **URL base**
+
+
+    Use a seguinte URL como base para todas as chamadas nesta API:
+
+
+    [https://pipeimob.com.br/api/1.1/wf](https://pipeimob.com.br/api/1.1/wf)
+
+
+    ### **Acesso às rotas por Parceiros Externos**
+
+
+    Usuários de Parceiros Externos (empresas de Assessoria de Crédito,
+    Escreventes de Notas, empresas de Tecnologia/Marketplaces etc) têm, também,
+    possibilidade de consulta de detalhes sobre as transações na rota /negocios.
+
+
+    Deve-se solicitar à equipe do PipeImob as Credenciais de API de determinado
+    usuário de tal parceiro, querendo acesso a tal funcionalidade.
+
+
+    Atenção: a imobiliária &#34;dona&#34; do negócio precisa, para cada
+    específico Parceiro, determinar se permite a este o acesso aos dados das
+    transações via API. Isto é feito por qualquer Gestor da Imobiliária em
+    _Ajustes_ &gt; _Visão Geral_ &gt; _Parceiros_, então clicar sobre o parceiro
+    que deseja alterar e, na aba _Níveis de Autorização_, adequar as permissões.
+
+
+    ### **Acesso Dados Sensíveis**
+
+
+    Por questões de confiencialidade, conformidade com LGPD e segurança da
+    informação, alguns dados sensíveis só podem ser disponibilizados mediante
+    solicitação por canais oficiais, feita diretamente pelo responsável da
+    imobiliária. Se o usuário não tem a permissão deliberadamente para acesso a
+    esses dados, a API retorna apenas os dados comuns.
+
+
+    Para realizar a solicitação de acesso a dados sensíveis, utilize nosso
+    atendimento ao cliente e faça a solicitação através de abertura de um ticket
+    em nosso suporte e, após avaliação do trâmite, será disponibilizado o
+    acesso.
+
+
+    ### **Webhooks de Eventos-críticos para Agências e Parceiros**
+
+
+    A imobiliária pode configurar um endereço de endpoint para ser informada, em
+    tempo real, a medida que eventos acontecerem em suas transações. O pedido de
+    configuração de uma URL que será o endpoint para o recebimento destes
+    eventos deve ser feito pela imobiliária à equipe de suporte do PipeImob.
+
+
+    Já no caso de Parceiros Externos (empresas de Assessoria de Crédito,
+    Escreventes de Notas, empresas de Tecnologia/Marketplaces etc), a
+    configuração da URL está disponível no próprio front do sistema, em
+    Configurações &gt; Parceiros, por parte da imobiliária que o cadastrou. E,
+    tratando-se de um parceiro &#34;geral&#34; (homologado pelo PipeImob), então
+    o pedido também deve ser feito à equipe de suporte.
+
+
+    Os eventos de webhook são sempre enviados para uma mesma URL, tendo a
+    seguinte estrutura:
+
+
+    {  
+
+    &#34;event&#34;: &#34;CHAVES_ENTREGUES&#34;,  
+
+    &#34;event_time&#34;: &#34;2019-08-23T04:00:00Z&#34;,  
+
+    &#34;agencia_slug&#34;: &#34;imobiliariasilva&#34;,  
+
+    &#34;codigo_imovel&#34;: &#34;XPTO&#34;,  
+
+    &#34;codigo_contrato&#34;: &#34;XPTO_CONTRACT&#34;,  
+
+    &#34;codigo_contrato_novo&#34;: &#34;XPTO_CONTRACT_NEW&#34;,  
+
+    &#34;transacao_uniqueId_pipeimob&#34;:
+    &#34;0987123101029xx6540842132121x65421&#34;,  
+
+    &#34;subetapa&#34;: &#34;Nome da Subetapa&#34;,  
+
+    &#34;parceiro_incluido_nomeFantasia&#34;: &#34;Parceiro XPTO&#34;,  
+
+    &#34;parceiro_incluido_razaoSocial&#34;: &#34;Parceiro XPTO LTDA&#34;,  
+
+    &#34;parceiro_incluido_tipo&#34;: &#34;Advogado&#34;,  
+
+    &#34;cobranca&#34;: &#34;[https://www.pipeimob.com.br/cobranca/xpto&#34;,<br
+    />](https://www.pipeimob.com.br/cobranca/xpto)&#34;etapa_atual&#34;:
+    &#34;ESCRITURA&#34;  
+
+    }
+
+
+    Observações:
+
+
+    - o campo &#34;subetapa&#34; será enviado apenas no caso de eventos
+    &#34;SUBETAPA_ATIVADA&#34; ou &#34;SUBETAPA_CONCLUIDA&#34;;
+        
+    - os campos &#34;parceiro_incluido_nomeFantasia&#34;,
+    &#34;parceiro_incluido_razaoSocial&#34; e &#34;parceiro_incluido_tipo&#34;
+    serão enviados apenas no caso do evento &#34;PARCEIRO_INCLUIDO&#34;;
+        
+    - o campo &#34;cobranca&#34; será enviado apenas no caso de eventos que
+    envolvam cobranças bancárias (criadas, pagas ou editadas);
+        
+    - o campo &#34;etapa_atual&#34; será enviado apenas no caso do evento
+    &#34;ETAPA_ALTERADA&#34;;
+        
+    - o campo &#34;codigo_contrato_novo&#34; será enviado apenas no caso do
+    evento &#34;CODIGO_CONTRATO_ALTERADO&#34;;
+        
+    - no caso dos eventos &#34;COMISSIONADO_REMOVIDO&#34;,
+    &#34;COMISSIONADO_INCLUIDO&#34; ou &#34;COMISSIONADO_ALTERADO&#34;, serão
+    enviados os campos &#34;comissionado_uniqueId&#34;,
+    &#34;comissionado_nome&#34; e &#34;comissionado_cpfCnpj&#34;;
+        
+    - no caso do evento &#34;COMISSIONADO_ALTERADO&#34;, serão também enviados
+    os campos &#34;comissionado_valorAnterior&#34; (tipo _number_) e
+    &#34;comissionado_valorAtual&#34; (tipo _number_).
+        
+
+    Então, recebido o evento, pode-se utilizar a rota /negocios para o retorno
+    de ademais detalhes sobre aquela transação.
+
+
+    Os eventos atualmente disponíveis (campo _event_ do json) são os seguintes:
+
+
+    | Event | Descrição |
+
+    | --- | --- |
+
+    | PROPOSTA_ASSINADA_PROPONENTES | A medida que todos os proponentes
+    (potenciais compradores) assinam, eletronicamente, uma proposta de compra de
+    imóvel |
+
+    | PROPOSTA_ASSINADA_PROPRIETARIOS | A medida que todos os proprietários que
+    foram cadastrados assinam, eletronicamente, uma proposta de compra de imóvel
+    |
+
+    | TRANSACAO_PREENCHIMENTO_INICIADO | Quando se inicia o preenchimento do
+    Formulário de Transação |
+
+    | TRANSACAO_INICIADA | Término do Formulário de Transação e envio do imóvel
+    à tela de Negócios |
+
+    | CODIGO_CONTRATO_ALTERADO | Caso, após o início da transação, haja uma
+    alteração no Código do Imóvel, isto alterará o Código Sequencial do Contrato
+    em curso. Nesta situação, este evento de webhook avisará de tal mudança,
+    enviando o código antigo no campo &#34;codigo_contrato&#34;, e o novo no
+    campo &#34;codigo_contrato_novo&#34; |
+
+    | ETAPA_ALTERADA | A medida que a etapa da transação por alterada. O nome da
+    etapa é um parâmetro configurável por imobiliária. |
+
+    | SUBETAPA_ATIVADA | A medida que uma subetapa na esteira de determinada
+    transação é ativada. O título da subetapa será enviado no json. |
+
+    | SUBETAPA_CONCLUIDA | A medida que uma subetapa na esteira de determinada
+    transação tem o status alterado para &#34;Concluída&#34;. O título da
+    subetapa será enviado no json. |
+
+    | CONTRATO_ASSINADO | A medida que o campo de &#34;data de assinatura do
+    CCV&#34; é preenchido para determina transação |
+
+    | COBRANCA_SINAL_GERADA | A medida que for gerada uma cobrança do tipo
+    &#34;Sinal / Entrada&#34; associada àquela transação |
+
+    | COBRANCA_SINAL_EDITADA_DATA | A medida que for gerada uma cobrança do tipo
+    &#34;Sinal / Entrada&#34; associada àquela transação tiver sua data de
+    vencimento editada |
+
+    | COBRANCA_SINAL_EDITADA_VALOR | A medida que for gerada uma cobrança do
+    tipo &#34;Sinal / Entrada&#34; associada àquela transação tiver seu valor
+    editado |
+
+    | COBRANCA_SINAL_EXCLUIDA | A medida que for gerada uma cobrança do tipo
+    &#34;Sinal / Entrada&#34; associada àquela transação tiver sido cancelada |
+
+    | COBRANCA_SINAL_PAGA | A medida que for paga uma cobrança do tipo
+    &#34;Sinal / Entrada&#34; associada àquela transação |
+
+    | COBRANCA_COMISSAO_GERADA | A medida que for gerada uma cobrança do tipo
+    &#34;Comissão&#34; associada àquela transação |
+
+    | COBRANCA_COMISSAO_EDITADA_DATA | A medida que for gerada uma cobrança do
+    tipo &#34;Comissão&#34; associada àquela transação tiver sua data de
+    vencimento editada |
+
+    | COBRANCA_COMISSAO_EDITADA_VALOR | A medida que for gerada uma cobrança do
+    tipo &#34;Comissão&#34; associada àquela transação tiver seu valor editado |
+
+    | COBRANCA_COMISSAO_EXCLUIDA | A medida que for gerada uma cobrança do tipo
+    &#34;Comissão&#34; associada àquela transação tiver sido cancelada |
+
+    | COBRANCA_COMISSAO_PAGA | A medida que for paga uma cobrança do tipo
+    &#34;Comissão&#34; associada àquela transação |
+
+    | CONTRATO_CANCELADO | O campo de &#34;data de assinatura do CCV&#34; estava
+    preenchido, e agora foi apagado |
+
+    | ESCRITURA_LAVRADA | A medida que o campo de &#34;data de lavratura de
+    escritura&#34; (ou de assinatura do contrato de financiamento, se o caso) é
+    preenchido para determina transação |
+
+    | CHAVES_ENTREGUES | A medida que o campo de &#34;data de entrega das
+    chaves&#34; (entrega da posse) é preenchido para determina transação |
+
+    | REGISTRO_PUBLICO | A medida que o campo de &#34;data de registro
+    público&#34; (junto ao Cartório de Imóveis) é preenchido para determina
+    transação |
+
+    | ARQUIVAMENTO_VENDA_FINALIZADA | A medida que uma transação for arquivada
+    utilizando-se o motivo &#34;Transação Finalizada&#34; |
+
+    | ARQUIVAMENTO_VENDA_CANCELADA | A medida que uma transação for arquivada
+    sem que tenha se utilizado do motivo &#34;Transação Finalizada&#34; |
+
+    | PARCEIRO_INCLUIDO | A inclusão de qualquer parceiro externo àquela
+    transação, como Advogados, empresas de Tecnologia e Marketplace,
+    Imobiliárias e Corretores externos, etc. |
+
+    | COMISSIONADO_REMOVIDO | Uma vez que, posteriormente ao envio da transação
+    (fazendo constar à tela de negócios), um dos comissionados que até então se
+    encontrava à estrutura de detentores de direitos sobre a comissão, for
+    removido |
+
+    | COMISSIONADO_INCLUIDO | Uma vez que, posteriormente ao envio da transação
+    (fazendo constar à tela de negócios), for incluído um novo comissionado que
+    até então não se encontrava à estrutura de detentores de direitos sobre a
+    comissão |
+
+    | COMISSIONADO_ALTERADO_VALOR | Uma vez que, posteriormente ao envio da
+    transação (fazendo constar à tela de negócios), altera-se o valor da
+    comissão de um dos que já se encontrava à estrutura de detentores de
+    direitos sobre a comissão |
+
+
+    ### **Polling vs. Webhooks e limites da API**
+
+
+    Enviamos webhooks para grande parte dos eventos-críticos que envolvem os
+    negócios e, por isto, o _polling_ poderá ser considerada uma má prática no
+    uso da API e poderá gerar o bloqueio temporário da credencial.
+
+
+    **Polling** representa a periódica requisição da API para verificar se há
+    novas informações ou atualizações, sendo um método ineficiente e que
+    sobrecarrega o servidor, especialmente se as atualizações são raras,
+    desperdiçando-se recursos de ambos os lados.
+
+
+    **Webhooks**, por outro lado, permitem que o servidor envie dados
+    diretamente para o cliente assim que uma atualização relevante ocorre. Isso
+    elimina a necessidade de requisições periódicas, tornando o processo mais
+    eficiente. O servidor notifica o cliente apenas quando necessário,
+    economizando recursos e garantindo que as informações sejam entregues em
+    tempo real.
+
+
+    A rota de negócios da API do PipeImob comporta um máximo de 10 (dez)
+    requisições diárias sem a utilização de filtros de negócios (código de
+    imóvel, código de contrato ou uniqueID) - ou seja, para um retorno que
+    contemple todas as transações, dentro de um intervalo de tempo (de até 30
+    dias). Tratando-se de requisições que se utilizam de filtro de um negócio
+    específico (recuperando, então, somente aquele negócio, porém com mais
+    profundidade em termos de detalhes), serão consideradas aceitáveis até 100
+    (cem) requisições diárias, sendo que volumes acima disto poderão ser
+    considerados _polling_ e gerarão a interrupção do serviço.
+
+
+    ### **Bearer Authorization no Header**
+
+
+    Os webhooks são enviados com um _header_ no formato abaixo:
+
+
+    - Authorization Bearer _token_
+        
+
+    Sendo que o token é versionado por imobiliária e/ou franqueadora e/ou
+    transação. Caso tenha interesse em usar tal header como validador de
+    recebimento de mensageria, entre em contato com nosso suporte a respeito.
+  contact: {}
+  version: 1.0.0
+servers:
+  - url: https://pipeimob.com.br/api/1.1/wf
+  - url: https://pipeimob.com.br
+tags:
+  - name: Auth
+    description: >-
+      Chamadas relacionadas ao processo de identificação e autorização junto à
+      **API PIPEIMOB**.
+  - name: Users
+  - name: Negócios
+  - name: Clientes
+  - name: Recebimentos
+  - name: Agências
+paths:
+  /auth:
+    post:
+      tags:
+        - Auth
+      summary: Auth
+      description: >-
+        # Autenticação e Autorização
+
+
+        - Para utilizar os recursos da **API PIPEIMOB** é preciso primeiro se
+        autenticar através desse endpoint &#96;/Auth&#96; para obter o token.
+
+        - Através desse processo, após verificação das credenciais, a plataforma
+        irá devolver um Token (token) o quel deverá ser utilizado em todas as
+        chamadas aos demais endpoints..
+            
+
+        ## Credenciais
+
+
+        Primeira ação realizada é a autenticação. Essa chamada solicita os
+        seguintes parâmetros:
+
+
+        | Parâmetro | Descrição |
+
+        | --- | --- |
+
+        | api_key | a API_KEY é uma UUID padrão universal (string no formato
+        formato 00000000-0000-0000-0000-000000000000 tipo texto, única e
+        imutável), enviado ao usuário da plataforma PIPEIMOB durante o cadastro.
+        Essa informação pode ser encontrada no Pipeimob clicando em INTEGRAÇÕES,
+        na seção API PIPEIMOB. |
+
+        | api_secret | A API_SECRET é uma string codificadoa SHA256, tipo texto,
+        com 32 caracteres. É enviada para o usuário no ato de abertura de conta.
+        Essa informação pode ser encontrada no Pipeimob clicando em INTEGRAÇÕES,
+        na seção API PIPEIMOB. |
+
+
+        ---
+
+
+        Confira na imagem abaixo o fluxo de autenticação da **API PIPEIMOB**
+        versão 1.0:
+
+
+
+
+        Em **todos os casos,** de sucesso ou insucesso, a **resposta sempre será
+        tipo 200 OK**, porém no corpo da mensagem de resposta, o campo
+        &#34;status&#34; trará detalhes, informando se a autenticação ocorreu
+        com sucesso ou se falhou.
+      operationId: auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/auth_body'
+            examples:
+              Auth:
+                value:
+                  api_key: 00000000-0000-0000-0000-000000000000
+                  api_secret: '000000000000000000000000000000000000000000000000000000000'
+      responses:
+        '200':
+          description: Auth - SUCCESS / Auth - ERROR
+          headers:
+            CF-Cache-Status:
+              schema:
+                type: string
+                example: DYNAMIC
+            CF-RAY:
+              schema:
+                type: string
+                example: 7d11c698b92a031b-GRU
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Content-Encoding:
+              schema:
+                type: string
+                example: br
+            Date:
+              schema:
+                type: string
+                example: Fri, 02 Jun 2023 18:31:53 GMT
+            Server:
+              schema:
+                type: string
+                example: cloudflare
+            Transfer-Encoding:
+              schema:
+                type: string
+                example: chunked
+            access-control-allow-origin:
+              schema:
+                type: string
+                example: '*'
+            vary:
+              schema:
+                type: string
+                example: Accept-Encoding
+            x-bubble-capacity-limit:
+              schema:
+                type: string
+                example: 0 ms slower
+            x-bubble-capacity-used:
+              schema:
+                type: string
+                example: 0.301 unit-seconds used
+            x-bubble-perf:
+              schema:
+                type: string
+                example: >-
+                  {"total":395.8,"percents":{"top":{"bubble_cpu":26.2,"block":73.7,"capacity_rl":0,"other_pause":0,"pre_fiber":0.2},"sub":{"pp_userdb":3.5,"pp_wait_userdb":0,"http_request":0,"serverjson":77.5,"appserver_cache_misses_time":0,"redis":43.8,"fiber_queue":9,"capacity_wait":0.4}},"counts":{"pp_userdb":1,"http_request":0,"derived_build":0,"derived_cache_attempts":2,"derived_cache_memory_misses":2,"serverjson":93,"appserver_cache_attempts":1,"appserver_mem_cache_hits":0,"appserver_cache_hits":1,"appserver_cache_misses":0,"redis":72,"fiber_queue":77,"blocks":76},"misc":{"userdb_results":0,"userdb_data":4,"spent_time":19542836,"derived_build_time_spent":0}}
+            x-powered-by:
+              schema:
+                type: string
+                example: Express
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+              examples:
+                Auth - ERROR:
+                  value:
+                    response:
+                      error: true
+                      message: >-
+                        Problemas com suas credenciais API. Verifique e tente
+                        novamente. 
+                    status: success
+                Auth - SUCCESS:
+                  value:
+                    response:
+                      error: false
+                      expires: 3600
+                      token: seu_token
+                    status: success
+  /users:
+    post:
+      tags:
+        - Users
+      summary: Dados de Usuários
+      description: >-
+        Este endpoint retorna os dados detalhados de toda a base de usuários do
+        PipeImob, inclusive quanto aos usuários não mais ativos, atualmente
+      operationId: dadosDeUsuRios
+      responses:
+        '200':
+          description: Token inválido / 200 OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            CF-Cache-Status:
+              schema:
+                type: string
+                example: DYNAMIC
+            CF-RAY:
+              schema:
+                type: string
+                example: 867fde467bec3dd7-MIA
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Content-Encoding:
+              schema:
+                type: string
+                example: br
+            Date:
+              schema:
+                type: string
+                example: Thu, 21 Mar 2024 18:05:07 GMT
+            NEL:
+              schema:
+                type: string
+                example: '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}'
+            Report-To:
+              schema:
+                type: string
+                example: >-
+                  {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v4?s=UYCPYRlBX5OqLQPORSU8CLX6kg%2BAfGR%2FfLvr556%2FMV8QxX9QS2ogpeX8D2xHcsytj1KUsNU2XiH6DkMIaknHOVZk5jPoHd%2BQv24MdPOBfPRP%2FjtXOeQ8NEQvc0BvBWAz22c%3D"}],"group":"cf-nel","max_age":604800}
+            Server:
+              schema:
+                type: string
+                example: cloudflare
+            Set-Cookie:
+              schema:
+                type: string
+                example: >-
+                  fluxoimobiliario_live_u2d193.sig=q0belzkTP3HZ_Wqv3rabq8bJ96M;
+                  path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure;
+                  httponly
+            Transfer-Encoding:
+              schema:
+                type: string
+                example: chunked
+            Vary:
+              schema:
+                type: string
+                example: Accept-Encoding
+            X-Bubble-Capacity-Limit:
+              schema:
+                type: string
+                example: 0 ms slower
+            X-Bubble-Capacity-Used:
+              schema:
+                type: string
+                example: 0.892 unit-seconds used
+            X-Bubble-Perf:
+              schema:
+                type: string
+                example: >-
+                  {"total":429.1,"percents":{"top":{"bubble_cpu":59.1,"block":41.1,"capacity_rl":0,"other_pause":0,"pre_fiber":0.1},"sub":{"pp_userdb":20.7,"pp_wait_userdb":0,"http_request":0,"serverjson":14.3,"appserver_cache_misses_time":0,"redis":56.9,"fiber_queue":1.1,"capacity_wait":0}},"counts":{"pp_userdb":9,"http_request":0,"derived_build":0,"serverjson":14,"appserver_cache_attempts":0,"appserver_mem_cache_hits":0,"appserver_cache_hits":0,"appserver_cache_misses":0,"redis":144,"fiber_queue":122,"blocks":121},"misc":{"userdb_results":66,"userdb_data":222084,"spent_time":58008686}}
+            X-Powered-By:
+              schema:
+                type: string
+                example: Express
+            alt-svc:
+              schema:
+                type: string
+                example: h3=":443"; ma=86400
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_1'
+              examples:
+                200 OK:
+                  value:
+                    agencia: Nome da agência
+                    total_usuarios: 20
+                    usuarios:
+                      - agencia: Nome da agência
+                        aprovado: true
+                        celular: '85999998888'
+                        cpf: '32165498700'
+                        creci_data_assinatura: ''
+                        creci_estagiario: false
+                        creci_numero: ''
+                        crm_id: ''
+                        data_associacao: ''
+                        data_criacao_usuario: '2023-07-31T14:18:49.759Z'
+                        data_distrato: ''
+                        data_nascimento: '1970-11-09T03:00:00.000Z'
+                        email: claudio@pipeimob.com.br
+                        email_pessoal: ''
+                        endereco_bairro: Nome do bairro
+                        endereco_cep: '60000000'
+                        endereco_cidade: Fortaleza
+                        endereco_complemento: ''
+                        endereco_logradouro: Rua Onde Reside
+                        endereco_numero: '777'
+                        endereco_uf: CE
+                        estadocivil: ''
+                        facebook: ''
+                        filial_a_que_pertence: ''
+                        instagram: ''
+                        is_team_leader: true
+                        linkedin: ''
+                        nome: Claudio
+                        nome_completo: Claudio Eden
+                        perfil: Gestor
+                        pj_cnpj: ''
+                        pj_razao_social: ''
+                        rg: '11223344556'
+                        sobrenome: Eden
+                        ultimo_acesso: '2024-03-19T12:08:19.983Z'
+                        uniqueid: 1723660753462x533041104715038100
+                        who_is_team_leader: ''
+                Token inválido:
+                  value:
+                    response:
+                      error_detected: true
+                      error_message: Token inválido ou não encontrado
+                    status: success
+  /user_aprovacao:
+    post:
+      tags:
+        - Users
+      summary: Aprovação de Usuário
+      description: >-
+        Este endpoint permite a alteração do status de "aprovação" de um
+        usuário. Usuários com status "aprovado" _false_ não podem acessar o
+        sistema.
+
+
+        Para utilização da rota, será necessário enviar no body o uniqueid
+        daquele usuário, conforme payload:
+
+
+        { "user_uniqueid": "xxxxxxx", "aprovado": false }
+
+
+        O uniqueid pode ser recuperado na rota /users (Dados de Usuários).
+
+
+        Importante: esta rota pode ser utilizada apenas por Parceiros Externos.
+        Imobiliárias e/ou Franqueadoras devem se utilizar do front do sistema
+        para gerirem seus usuários, de forma a garantir atendimento a regras de
+        negócios. Usuários com perfil _admin_ do sistema não podem ser
+        desativados via API.
+      operationId: aprovaODeUsuRio
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user_aprovacao_body'
+            examples:
+              Aprovação de Usuário:
+                value:
+                  aprovado: false
+                  user_uniqueid: 1713295578330x739397057760063200
+      responses:
+        '200':
+          description: Token inválido / 200 OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Date:
+              schema:
+                type: string
+                example: Tue, 25 Feb 2025 02:08:57 GMT
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=5
+            Set-Cookie:
+              schema:
+                type: string
+                example: >-
+                  fluxoimobiliario_test_u2d193.sig=jFgbz76r0AolJbvuvmKmCgi_pU8;
+                  path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure;
+                  httponly
+            Transfer-Encoding:
+              schema:
+                type: string
+                example: chunked
+            Vary:
+              schema:
+                type: string
+                example: Accept-Encoding
+            X-Bubble-Capacity-Limit:
+              schema:
+                type: string
+                example: 0 ms slower
+            X-Bubble-Capacity-Used:
+              schema:
+                type: string
+                example: 0.956 unit-seconds used
+            X-Bubble-Perf:
+              schema:
+                type: string
+                example: >-
+                  {"total":1507.3,"percents":{"top":{"bubble_cpu":24.8,"block":75.2,"capacity_rl":0,"other_pause":0,"pre_fiber":0.1},"sub":{"pp_userdb":1.5,"pp_wait_userdb":0,"http_request":0,"serverjson":17.3,"appserver_cache_misses_time":0,"redis":25,"fiber_queue":0.3,"capacity_wait":0}},"counts":{"pp_userdb":5,"http_request":0,"derived_build":0,"derived_cache_attempts":3,"derived_cache_memory_misses":3,"serverjson":75,"appserver_cache_attempts":1,"appserver_mem_cache_hits":0,"appserver_cache_hits":0,"appserver_cache_misses":1,"redis":108,"fiber_queue":111,"blocks":110},"misc":{"userdb_results":6,"userdb_data":2591,"spent_time":62171068}}
+            X-Powered-By:
+              schema:
+                type: string
+                example: Express
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_2'
+              examples:
+                200 OK:
+                  value:
+                    response:
+                      error_detected: false
+                      message: >-
+                        Configuração do usuário definida por rota de API,
+                        através de credenciais do usuário João da Silva. O
+                        status de aprovação do usuário era APROVADO, passando
+                        agora a ser REPROVADO
+                    status: success
+                Token inválido:
+                  value:
+                    response:
+                      error_detected: true
+                      error_message: Token inválido ou não encontrado
+                    status: success
+  /negocios:
+    post:
+      tags:
+        - Negócios
+      summary: Negócios Detalhados
+      description: >-
+        Rota para retornar detalhes sobre todas as transações. É obrigatório que
+        se passe um range de datas, que deverá ser de no máximo 31 dias. As
+        datas levam em consideração a assinatura do compromisso de compra e
+        venda.
+
+
+        ### **Filtros e Configurações da Rota de Negócios**
+
+
+        Por padrão, os campos "date_initial" e "date_final" dizem respeito às
+        datas de assinatura dos CCVs.
+
+
+        Porém, caso se queira mandar tal range relativamente à data do "início"
+        da venda (término do preenchimento do Formulário de Transação e envio do
+        imóvel à tela de Negócios), basta se mandar o campo adicional abaixo no
+        body da requisição:
+
+
+        _"date_type": "venda_inicio"_
+
+
+        Caso se queira retornar um negócio específico, então basta mandar um dos
+        seguintes campos no _body_:
+
+
+        _"codigo_imovel": "XPTO"_
+
+
+        ou
+
+
+        _"codigo_contrato": "XPTO"_
+
+
+        ou
+
+
+        _"transacao_uniqueid": "transacao_uniqueid"_
+
+
+        Atenção: caso sejam mandado os campos "codigo_imovel" ou
+        "codigo_contrato" ou "transacao_uniqueid", então a API não levará em
+        consideração o "date_initial", "date_final" e o "date_type". E, caso
+        mais de um filtro (dentre "codigo_imovel" ou "codigo_contrato" ou
+        "transacao_uniqueid" sejam mandados na mesma requisição, apenas um deles
+        será considerado, com a seguinte ordem de preferência:
+
+
+        "transacao_uniqueid": maior prioridade
+
+
+        "codigo_contrato": priodidade média
+
+
+        "codigo_imovel": menor prioridade
+
+
+        ### **Negócios de outras imobiliárias nas quais se é comissionado**
+
+
+        A /negocios, por padrão, retorna as transações que pertencem à
+        imobiliária (ou às imobiliárias da franquia) - ou seja, aquelas cuja
+        esteira da venda está sendo liderada pela mesma. Porém, é possível
+        também recuperar as transações de outras imobiliárias (ou, no caso de
+        franquias, de imobiliárias que não pertencem à rede) que incluíram a sua
+        como comissionada, no formulário de transação.
+
+
+        Para isto, basta passar o campo abaixo no body:
+
+
+        _"comissionado_externo": yes_
+
+
+        Desta forma, serão retornados os negócios de outras imobiliárias que,
+        respeitados os outros filtros enviados (date_initial, date_final,
+        date_type), incluíram aquela na estrutura de comissionados.
+
+
+        Este filtro (de _comissionado_externo_) está disponível apenas para
+        usuários da API que representem imobiliárias ou franquias, mas não para
+        perfis de Parceiros Externos.
+
+
+        ### **Filtro de uma transação específica**
+
+
+        Caso se opte por recuperar os detalhes de uma transação única
+        (utilizando-se os filtros "transacao_uniqueid", "codigo_contrato" ou
+        "codigo_imovel"), o json devolvido conterá detalhes adicionais sobre
+        aquele negócio:
+
+
+        - relação das subetapas da esteira, com status (Desativada, Em
+        Andamento, Em Atenção ou Concluída)
+            
+        - para as subetapas que não estiverem Desativadas:
+            
+            - eventuais tarefas que são previstas para aquela subetapa, com seu tipo ("Resposta Digitada", "Uma Opção", "Checklist" ou "Anexar Arquivos") e a pergunta em si
+                
+            - para as tarefas respondidas:
+                
+                - quando foi respondida
+                    
+                - quem respondeu
+                    
+                - detalhes da resposta (em caso de "Anexar Arquivos" ou "Checklist", os detalhes serão uma _lista_)
+      operationId: negCiosDetalhados
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/negocios_body'
+            examples:
+              Negócios Detalhados:
+                value:
+                  date_final: '2024-02-30 23:59:59'
+                  date_initial: '2024-01-01 00:00:00'
+      responses:
+        '200':
+          description: sucesso / erro - prazo superior a 31 dias
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            CF-Cache-Status:
+              schema:
+                type: string
+                example: DYNAMIC
+            CF-RAY:
+              schema:
+                type: string
+                example: 8588e6a2caa42640-GIG
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Content-Encoding:
+              schema:
+                type: string
+                example: br
+            Date:
+              schema:
+                type: string
+                example: Tue, 20 Feb 2024 18:44:26 GMT
+            NEL:
+              schema:
+                type: string
+                example: '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}'
+            Report-To:
+              schema:
+                type: string
+                example: >-
+                  {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=vHPKKGnIHeWNYqZr7nX4M793CFKKbrzl9JUUVFNuHnhvgmcZQYXu4Zoix64uro4%2FWPxabSdIpH%2BND8Uv0az8s4fOgeAOTLO0rYUMiJhYUjxoVaJByv5q6oK1b15d7doRPZ0%3D"}],"group":"cf-nel","max_age":604800}
+            Server:
+              schema:
+                type: string
+                example: cloudflare
+            Set-Cookie:
+              schema:
+                type: string
+                example: >-
+                  fluxoimobiliario_live_u2d193.sig=q0belzkTP3HZ_Wqv3rabq8bJ96M;
+                  path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure;
+                  httponly
+            Transfer-Encoding:
+              schema:
+                type: string
+                example: chunked
+            Vary:
+              schema:
+                type: string
+                example: Accept-Encoding
+            X-Bubble-Capacity-Limit:
+              schema:
+                type: string
+                example: 0 ms slower
+            X-Bubble-Capacity-Used:
+              schema:
+                type: string
+                example: 0.509 unit-seconds used
+            X-Bubble-Perf:
+              schema:
+                type: string
+                example: >-
+                  {"total":301.2,"percents":{"top":{"bubble_cpu":66.5,"block":33.1,"capacity_rl":0,"other_pause":0,"pre_fiber":0.2},"sub":{"pp_userdb":3.3,"pp_wait_userdb":0,"http_request":0,"serverjson":4.6,"appserver_cache_misses_time":0,"redis":47.4,"fiber_queue":0.6,"capacity_wait":0}},"counts":{"pp_userdb":3,"http_request":0,"derived_build":0,"serverjson":20,"appserver_cache_attempts":0,"appserver_mem_cache_hits":0,"appserver_cache_hits":0,"appserver_cache_misses":0,"redis":58,"fiber_queue":66,"blocks":65},"misc":{"userdb_results":4,"userdb_data":1581,"spent_time":33063625}}
+            X-Powered-By:
+              schema:
+                type: string
+                example: Express
+            alt-svc:
+              schema:
+                type: string
+                example: h3=":443"; ma=86400
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_3'
+              examples:
+                erro - prazo superior a 31 dias:
+                  value:
+                    response:
+                      error_detected: true
+                      error_message: >-
+                        Datas de início ou final da requisição não
+                        especificadas, ou período superior a 31 dias
+                    status: success
+                sucesso:
+                  value:
+                    data_fim: 15/03/2024
+                    data_inicio: 15/03/2024
+                    franqueadora: Franqueadora da Agência
+                    total_transacoes: 6
+                    transacoes:
+                      - agencia: Imobiliária de Teste PipeImob
+                        agencia_tipo: Própria
+                        agencia_uniqueId: 1694520784344x804727749333221400
+                        agente_gestor: João da Silva
+                        agente_gestor_email: joaodasilva@imobiliaria.com.br
+                        agente_gestor_grupo_filial: ''
+                        agente_gestor_grupos_a_que_pertence: []
+                        area_total: 125.53
+                        area_util: 95.58
+                        arquivamento_motivo_geral: ''
+                        categoria: ''
+                        cobrancas_bancarias:
+                          - data_criacao: 13/03/2024
+                            data_pagamento: 15/03/2024
+                            data_vencimento: 14/03/2024
+                            forma_pagamento: Boleto Bancário
+                            pagador_cpfCnpj: 026.603.710-08
+                            pagador_nome: Pagador da Silveira
+                            split:
+                              - cpfCnpj: 466.339.940-10
+                                nome: Primeiro Splitado
+                                valor: 1870
+                              - cpfCnpj: 820.507.560-38
+                                nome: Segundo Splitado
+                                valor: 3630
+                              - cpfCnpj: 32.598.126/0001-04
+                                nome: Terceiro Splitado
+                                valor: 5495
+                            subconta_cpfCnpj: 50.199.172/0001-04
+                            subconta_criadora: PipeImob Geradora
+                            tipo_cobranca: Comissões
+                            url_cobranca: >-
+                              https://pipeimob.com.br/cobranca/1710352030860x297263654623132132
+                            valor: 11000
+                        codigo_contrato: AET391113_1
+                        codigo_imovel: '391113'
+                        comissionados:
+                          - comissionado_PJ_corretor: false
+                            comissionado_agencia: false
+                            comissionado_corretor: true
+                            comissionado_cpfCnpj: 967.116.550-87
+                            comissionado_filial: false
+                            comissionado_franqueadora: false
+                            comissionado_nome: João da Silva
+                            comissionado_parceiroExterno: false
+                            comissionado_tipo_participacao: Corretor Vendedor
+                            comissionado_uniqueId: 1709575928002x478640290628542100
+                            comissionado_valor: 9900
+                          - comissionado_PJ_corretor: false
+                            comissionado_agencia: false
+                            comissionado_corretor: true
+                            comissionado_cpfCnpj: 683.108.340-47
+                            comissionado_filial: false
+                            comissionado_franqueadora: false
+                            comissionado_nome: Maria Braga
+                            comissionado_parceiroExterno: false
+                            comissionado_tipo_participacao: Corretor Agenciador
+                            comissionado_uniqueId: 1709575929461x270526476713047070
+                            comissionado_valor: 5100
+                          - comissionado_PJ_corretor: false
+                            comissionado_agencia: true
+                            comissionado_corretor: false
+                            comissionado_cpfCnpj: 50.199.172/0001-04
+                            comissionado_filial: false
+                            comissionado_franqueadora: false
+                            comissionado_nome: Imobiliária Teste PipeImob
+                            comissionado_parceiroExterno: false
+                            comissionado_tipo_participacao: Imobiliária
+                            comissionado_uniqueId: 1709575931551x532630716762829700
+                            comissionado_valor: 15000
+                        data_arquivamento_finalizada: ''
+                        data_captacao: 08/11/2022
+                        data_contrato: 15/03/2024
+                        data_entrega_chaves_posse: ''
+                        data_registro_publico: ''
+                        data_submissao_proposta: ''
+                        diasemestoque: 482
+                        endereco_bairro: Rio Branco
+                        endereco_cep: '90640001'
+                        endereco_cidade: Porto Alegre
+                        endereco_complemento: Apt 123
+                        endereco_completo: >-
+                          VICENTE DA FONTOURA, 199, Apt 123, Rio Branco, Porto
+                          Alegre / RS, CEP 90640001
+                        endereco_logradouro: VICENTE DA FONTOURA
+                        endereco_numero: '199'
+                        endereco_uf: RS
+                        etapa_atual: Solicitação de Contrato
+                        financiamento: true
+                        financiamento_banco: ''
+                        forma_pagamento:
+                          - forma_pagamento_detalhes: >-
+                              TED OU PIX na assintura do contrato de compra e
+                              venda. 
+                            forma_pagamento_nome: Sinal e princípio de pagamento
+                            forma_pagamento_valor: 50000
+                          - forma_pagamento_detalhes: 'TED OU PIX '
+                            forma_pagamento_nome: >-
+                              Recursos próprios (não FGTS) no ato do
+                              financiamento
+                            forma_pagamento_valor: 200000
+                          - forma_pagamento_detalhes: 'TED OU PIX '
+                            forma_pagamento_nome: Alienação fiduciária (crédito do financiamento)
+                            forma_pagamento_valor: 250000
+                        midia_origem_compradores: ''
+                        midia_origem_vendedores: ''
+                        parceirosExternos:
+                          - parceiro_nomeFantasia: ''
+                            parceiro_nomeRazaoSocial: Imara Corretagem EIRELI
+                            parceiro_tipo: Corretor (externo)
+                          - parceiro_nomeFantasia: Parceirão das Compras
+                            parceiro_nomeRazaoSocial: Parceirão das Compras LTDA
+                            parceiro_tipo: Imobiliária (parceira)
+                        proprietario_cpf: 578.760.380-00
+                        qtd_quartos: 3
+                        qtd_vagas: 1
+                        residencial_comercial: Comercial
+                        team_leader: ''
+                        total_comissao: 30000
+                        transacao_uniqueId_pipeimob: 1695817559481x668744030924915600
+                        usuarios_participantes:
+                          - joaodasilva@imobiliaria.com.br
+                          - mariadasilva@imobiliaria.com.br
+                          - josedasilva@imobiliaria.com.br
+                        valor_contrato: 500000
+  /comissionados:
+    post:
+      tags:
+        - Negócios
+      summary: Comissionados Detalhados
+      description: Comissionados Detalhados
+      operationId: comissionadosDetalhados
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/comissionados_body'
+            examples:
+              Comissionados Detalhados:
+                value:
+                  date_final: '2024-01-31 23:59:59'
+                  date_initial: '2024-01-01 00:00:00'
+      responses:
+        '200':
+          description: erro - autenticação / Comissionados Detalhados
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            CF-Cache-Status:
+              schema:
+                type: string
+                example: DYNAMIC
+            CF-RAY:
+              schema:
+                type: string
+                example: 8588e9278c4c2640-GIG
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Content-Encoding:
+              schema:
+                type: string
+                example: br
+            Date:
+              schema:
+                type: string
+                example: Tue, 20 Feb 2024 18:46:10 GMT
+            NEL:
+              schema:
+                type: string
+                example: '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}'
+            Report-To:
+              schema:
+                type: string
+                example: >-
+                  {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=ZIp6IhCL%2BgoX52%2BGB25OXh9LKf1PuUBIoVkhZkAh07Obu2BsIV7Q2n0OLXNo6mEkkSJdnYMEXvwKanJHsr4mrI%2BP9%2BtEuKbmYrDlXQKzjppvUrOZ4LANJ5wFnlr50jflwwA%3D"}],"group":"cf-nel","max_age":604800}
+            Server:
+              schema:
+                type: string
+                example: cloudflare
+            Set-Cookie:
+              schema:
+                type: string
+                example: >-
+                  fluxoimobiliario_live_u2d193.sig=q0belzkTP3HZ_Wqv3rabq8bJ96M;
+                  path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure;
+                  httponly
+            Transfer-Encoding:
+              schema:
+                type: string
+                example: chunked
+            Vary:
+              schema:
+                type: string
+                example: Accept-Encoding
+            X-Bubble-Capacity-Limit:
+              schema:
+                type: string
+                example: 0 ms slower
+            X-Bubble-Capacity-Used:
+              schema:
+                type: string
+                example: 0.591 unit-seconds used
+            X-Bubble-Perf:
+              schema:
+                type: string
+                example: >-
+                  {"total":357,"percents":{"top":{"bubble_cpu":56.8,"block":43,"capacity_rl":0,"other_pause":0,"pre_fiber":0.2},"sub":{"pp_userdb":6.7,"pp_wait_userdb":0,"http_request":0,"serverjson":1.3,"appserver_cache_misses_time":0,"redis":58.2,"fiber_queue":0.5,"capacity_wait":0}},"counts":{"pp_userdb":6,"http_request":0,"derived_build":0,"serverjson":58,"appserver_cache_attempts":0,"appserver_mem_cache_hits":0,"appserver_cache_hits":0,"appserver_cache_misses":0,"redis":93,"fiber_queue":98,"blocks":97},"misc":{"userdb_results":9,"userdb_data":12062,"spent_time":38425156}}
+            X-Powered-By:
+              schema:
+                type: string
+                example: Express
+            alt-svc:
+              schema:
+                type: string
+                example: h3=":443"; ma=86400
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_4'
+              examples:
+                Comissionados Detalhados:
+                  value:
+                    agencia: Imobiliária Sortuda
+                    comissionados:
+                      - comissionado_PJ_corretor: false
+                        comissionado_agencia: true
+                        comissionado_corretor: false
+                        comissionado_cpfCnpj: 64.718.275/0001-48
+                        comissionado_filial: false
+                        comissionado_franqueadora: false
+                        comissionado_nome: Imobiliária Sortuda
+                        comissionado_parceiroExterno: false
+                        comissionado_tipo_participacao: ''
+                        comissionado_valor: 74466
+                        transacao_codigo_contrato: APT_XPTO_CONTRACT01
+                        transacao_codigo_imovel: APT_XPTO
+                    data_fim: 31/01/2024
+                    data_inicio: 01/01/2024
+                    total_transacoes: 1
+                erro - autenticação:
+                  value:
+                    response:
+                      error_detected: true
+                      error_message: Token inválido ou não encontrado
+                    status: success
+  /api/1.1/wf/negocios_lista:
+    post:
+      tags:
+        - Negócios
+      summary: Lista de Negócios
+      description: >-
+        Esta rota retornará a lista de transações que estão em curso, assim como
+        aquelas que foram já arquivadas.
+
+
+        O retorno contempla somente o uniqueID de cada transação, cujos detalhes
+        poderão ser recuperados na rota própria.
+
+
+        É obrigatório o envio no _body_ do filtro especificando a data da última
+        modificação naquela transação - ou seja, deve-se retornar apenas
+        transações cujos registros tiveram alguma (qualquer) alteração
+        posteriormente à data selecionada, conforme modelo:
+
+
+        {"date_last_modified": "AAAA-MM-DD hh:mm:ss"}
+
+
+        No caso do usuário da API ter perfil de "imobiliária", serão retornadas
+        as transações da mesma, assim como aquelas nas quais tal imobiliária foi
+        incluída como comissionada.
+
+
+        No caso do usuário da API ter perfil de "franquia", serão retornadas as
+        transações de todas as imobiliárias de tal rede, assim como aquelas nas
+        quais tais imobiliárias foram incluídas como comissionadas.
+
+
+        No caso do usuário da API ter o perfil de "parceiro", serão retornadas
+        as transações que incluíram tal parceiro como envolvido, assim como toas
+        as transações de imobiliárias que deram autorização total a acesso a
+        dados via API àquele parceiro.
+      operationId: listaDeNegCios
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/wf_negocios_lista_body'
+            examples:
+              Lista de Negócios:
+                value:
+                  date_last_modified: '2024-09-05 23:59:59'
+      responses:
+        '200':
+          description: sucesso / erro - autenticação
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            CF-Cache-Status:
+              schema:
+                type: string
+                example: DYNAMIC
+            CF-RAY:
+              schema:
+                type: string
+                example: 8445a8d34888d148-FOR
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Content-Encoding:
+              schema:
+                type: string
+                example: br
+            Date:
+              schema:
+                type: string
+                example: Fri, 12 Jan 2024 13:13:54 GMT
+            NEL:
+              schema:
+                type: string
+                example: '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}'
+            Report-To:
+              schema:
+                type: string
+                example: >-
+                  {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=Bw%2FWe3xYS1kOauGFN%2BClZmUrzbrf%2B1LZnrP0LCpAoAhtMdnLovlf%2FCbTpfLn11bbi89DJrH6f8m7CHAU8HxNeCsKeHXfMtUb5EXro8Dr0T3Z46CC3BcA8tOCHiej8%2BOaS88%3D"}],"group":"cf-nel","max_age":604800}
+            Server:
+              schema:
+                type: string
+                example: cloudflare
+            Set-Cookie:
+              schema:
+                type: string
+                example: >-
+                  fluxoimobiliario_live_u2d193.sig=q0belzkTP3HZ_Wqv3rabq8bJ96M;
+                  path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure;
+                  httponly
+            Transfer-Encoding:
+              schema:
+                type: string
+                example: chunked
+            Vary:
+              schema:
+                type: string
+                example: Accept-Encoding
+            X-Bubble-Capacity-Limit:
+              schema:
+                type: string
+                example: 0 ms slower
+            X-Bubble-Capacity-Used:
+              schema:
+                type: string
+                example: 0.338 unit-seconds used
+            X-Bubble-Perf:
+              schema:
+                type: string
+                example: >-
+                  {"total":214.9,"percents":{"top":{"bubble_cpu":52.7,"block":46,"capacity_rl":0,"other_pause":0,"pre_fiber":0.3},"sub":{"pp_userdb":9.8,"pp_wait_userdb":0,"http_request":0,"serverjson":22.7,"appserver_cache_misses_time":0,"redis":67.3,"fiber_queue":1.1,"capacity_wait":0}},"counts":{"pp_userdb":1,"http_request":0,"derived_build":0,"serverjson":112,"appserver_cache_attempts":0,"appserver_mem_cache_hits":0,"appserver_cache_hits":0,"appserver_cache_misses":0,"redis":32,"fiber_queue":36,"blocks":35},"misc":{"userdb_results":0,"userdb_data":4,"spent_time":21983752}}
+            X-Powered-By:
+              schema:
+                type: string
+                example: Express
+            alt-svc:
+              schema:
+                type: string
+                example: h3=":443"; ma=86400
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_5'
+              examples:
+                erro - autenticação:
+                  value:
+                    response:
+                      error_detected: true
+                      error_message: Token inválido ou não encontrado
+                    status: success
+                sucesso:
+                  value:
+                    total_transacoes: 15
+                    transacoes:
+                      - 1658493951051x997376645325897700
+                      - 1688021917223x181378675474577500
+                      - 1688188440504x701448686603417100
+                      - 1691555450519x324313766565675300
+                      - 1696060172672x490120486688644900
+                      - 1697052017167x991613815888456700
+                      - 1697827800943x747690958296578000
+                      - 1698147095888x668204918306766800
+                      - 1698220205789x197923479117792600
+                      - 1698771827118x398304023496956550
+                      - 1699534366084x332344291252774600
+                      - 1699534562429x333831566438458600
+                      - 1699535067419x809963840857523400
+                      - 1699545083770x258714356434363650
+                      - 1699545135067x320952056165332800
+                    user_tipo: parceiro
+  /cadastrarcliente:
+    post:
+      tags:
+        - Clientes
+      summary: Criar Novo Cliente
+      description: "Essa rota permite cadastrar um novo cliente final vinculado a uma imobiliária, incluindo informações pessoais, dados do cônjuge, representantes legais e eventuais documentos.\n\nNão é possível vincular tal novo cliente cadastrado via API a uma transação. Isto deve ser feito pela própria interface do PipeImob, nos formulários das transações, para garantia às regras de negócios internas.\n\n### **📋\_ Regras de Negócio**\n\nNa tentativa de inclusão de cliente:  \n\n❌ A inclusão será **impedida** e retornará erro quando:\n\n- As **credenciais forem inválidas**\n    \n- As **credenciais não tiverem permissão** para a rota\n    \n- Estiverem faltando **campos obrigatórios**\n    \n- O **CPF ou CNPJ for inválido**\n    \n- O **CPF/CNPJ já estiver cadastrado para a mesma imobiliária**\n    \n- Os valores informados nos campos ENUM não forem válidos\n    \n\n✅ Na **inclusão com sucesso**:\n\n- Será retornado um uniqueId do cliente\n    \n- Os arquivos em documentos, se enviados corretamente, serão **baixados e anexados ao cliente**\n    \n\n### **📂\_ Observação sobre documentos**\n\n- O campo documentos é opcional e aceita uma lista de arquivos.\n    \n- Cada item da lista deve conter:\n    \n    - url: link público para download do arquivo.\n        \n    - nomeArquivo: nome amigável do documento.\n        \n    \n- **Importante:**\n    \n    - Os **links devem ser públicos e diretamente acessíveis**.\n        \n    - **Não é possível usar links do Google Drive**, pois o Google não permite o download de arquivos via requisições backend de forma direta e automatizada.\n        \n    \n\n### **📚\_ ENUMs Válidos**\n\n#### **tipoPessoa**\n\n- PF\n    \n- PJ\n    \n\n#### **estadoCivil**\n\n- casado\n    \n- uniaoestavel\n    \n- solteiro\n    \n- viuvo\n    \n- divorciado\n    \n\n#### **genero**\n\n- masculino\n    \n- feminino\n    \n\n#### **regimeMatrimonial**\n\n- comunhaoparcial\n    \n- comunhaouniversal\n    \n- separacaoconvencional\n    \n- separacaoobrigatoria\n    \n- participacaoaquestos\n    \n\n#### **representanteTipoRepresentacao**\n\n- procuracao\n    \n- alvarajudicial\n    \n- contratosocial\n    \n- estatutosocial\n    \n- outro"
+      operationId: criarNovoCliente
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/cadastrarcliente_body'
+            examples:
+              Criar Novo Cliente:
+                value: "{\r\n  \"tipoPessoa\": \"PF\",                          // ENUM: \"PF\", \"PJ\"\r\n  \"nomeRazaoSocial\": \"João da Silva\",\r\n  \"cpfCnpj\": \"289.712.600-09\",\r\n  \"rgIe\": \"MG1234567\",\r\n  \"estadoCivil\": \"casado\",                     // ENUM: \"casado\", \"uniaoestavel\", \"solteiro\", \"viuvo\", \"divorciado\"\r\n  \"regimeMatrimonial\": \"comunhaoparcial\",      // ENUM: \"comunhaoparcial\", \"comunhaouniversal\", \"separacaoconvencional\", \"separacaoobrigatoria\", \"participacaoaquestos\"\r\n  \"genero\": \"masculino\",                       // ENUM: \"masculino\", \"feminino\"\r\n  \"nomeMae\": \"Clara Maria da Silva\",\r\n  \"profissao\": \"Engenheiro Civil\",\r\n  \"email\": \"joao.silva@email.com\",\r\n  \"celular\": \"11999999999\",\r\n  \"endereco\": {\r\n    \"logradouro\": \"Rua das Flores\",\r\n    \"numero\": \"123\",\r\n    \"complemento\": \"apto 45\",\r\n    \"bairro\": \"Jardim Primavera\",\r\n    \"cidade\": \"São Paulo\",\r\n    \"uf\": \"SP\",\r\n    \"cep\": \"01234567\"\r\n  },\r\n  \"representantes\": [\r\n    {\r\n      \"nome\": \"Maria Oliveira\",\r\n      \"cpf\": \"98765432100\",\r\n      \"rg\": \"SP4567890\",\r\n      \"representanteTipoRepresentacao\": \"procuracao\",     // ENUM: \"procuracao\", \"alvarajudicial\", \"contratosocial\", \"estatutosocial\", \"outro\"\r\n      \"email\": \"maria.oliveira@email.com\",\r\n      \"celular\": \"11999998888\",\r\n      \"profissao\": \"Advogada\"\r\n    },\r\n    {\r\n      \"nome\": \"Carlos Mendes\",\r\n      \"cpf\": \"32165498700\",\r\n      \"rg\": \"RJ1239876\",\r\n      \"representanteTipoRepresentacao\": \"alvarajudicial\",\r\n      \"email\": \"carlos.mendes@email.com\",\r\n      \"celular\": \"11988887777\",\r\n      \"profissao\": \"Contador\"\r\n    }\r\n  ],\r\n  \"conjuge\": {\r\n    \"nomeRazaoSocial\": \"Ana Paula Silva\",\r\n    \"cpfCnpj\": \"98765432100\",\r\n    \"rgIe\": \"MG9988776\",\r\n    \"genero\": \"feminino\",                                // ENUM: \"masculino\", \"feminino\"\r\n    \"nomeMae\": \"Rita de Cássia Oliveira\",\r\n    \"profissao\": \"Administradora\",\r\n    \"email\": \"ana.paula@email.com\",\r\n    \"celular\": \"11988887777\"\r\n  },\r\n  \"documentos\": [\r\n    {\r\n      \"url\": \"https://urldeexemoplo.com.br\",\r\n      \"nomeArquivo\": \"próprio BD\"\r\n    },\r\n    {\r\n      \"url\": \"https://urldeexemplo2.com.br\",\r\n      \"nomeArquivo\": \"sem sharing\"\r\n    }\r\n  ]\r\n}"
+      responses:
+        '200':
+          description: sucesso / erro cliente já cadastrado
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            CF-Cache-Status:
+              schema:
+                type: string
+                example: DYNAMIC
+            CF-RAY:
+              schema:
+                type: string
+                example: 845d28b0a8cd6d4e-GIG
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Content-Encoding:
+              schema:
+                type: string
+                example: br
+            Date:
+              schema:
+                type: string
+                example: Mon, 15 Jan 2024 09:40:45 GMT
+            NEL:
+              schema:
+                type: string
+                example: '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}'
+            Report-To:
+              schema:
+                type: string
+                example: >-
+                  {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=Ouo5QJiSVW5ojNCFfrKiBKDmRlcFDIC1FgFUatuJqctVpvpwUL0LLuqIIqtfbsyM7wcVwfhHqQz41YVX5vOdMlptYocIODTvIYHyzq8VH8AoRrbplcwemM6YPsPx4xLNPWY%3D"}],"group":"cf-nel","max_age":604800}
+            Server:
+              schema:
+                type: string
+                example: cloudflare
+            Set-Cookie:
+              schema:
+                type: string
+                example: >-
+                  fluxoimobiliario_live_u2d193.sig=q0belzkTP3HZ_Wqv3rabq8bJ96M;
+                  path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure;
+                  httponly
+            Transfer-Encoding:
+              schema:
+                type: string
+                example: chunked
+            Vary:
+              schema:
+                type: string
+                example: Accept-Encoding
+            X-Bubble-Capacity-Limit:
+              schema:
+                type: string
+                example: 0 ms slower
+            X-Bubble-Capacity-Used:
+              schema:
+                type: string
+                example: 3.063 unit-seconds used
+            X-Bubble-Perf:
+              schema:
+                type: string
+                example: >-
+                  {"total":1360.6,"percents":{"top":{"bubble_cpu":52,"block":48.4,"capacity_rl":0,"other_pause":0,"pre_fiber":0.1},"sub":{"pp_userdb":31.8,"pp_wait_userdb":0,"http_request":0,"serverjson":2.5,"appserver_cache_misses_time":0,"redis":36.7,"fiber_queue":1.3,"capacity_wait":0}},"counts":{"pp_userdb":50,"http_request":0,"derived_build":0,"derived_cache_attempts":1,"derived_cache_memory_misses":1,"serverjson":200,"appserver_cache_attempts":1,"appserver_mem_cache_hits":0,"appserver_cache_hits":1,"appserver_cache_misses":0,"redis":508,"fiber_queue":458,"blocks":457},"misc":{"userdb_results":173,"userdb_data":425996,"spent_time":199082309}}
+            X-Powered-By:
+              schema:
+                type: string
+                example: Express
+            alt-svc:
+              schema:
+                type: string
+                example: h3=":443"; ma=86400
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_6'
+              examples:
+                erro cliente já cadastrado:
+                  value:
+                    response:
+                      error_detected: true
+                      error_message: >-
+                        Já existe um cliente cadastrado com este CPF para a base
+                        da Pipeimob
+                    status: success
+                sucesso:
+                  value:
+                    response:
+                      error_detected: false
+                      error_message: >-
+                        Cliente cadastrado na base da Pipeimob sob o uniqueId
+                        1748024423643x398172086403603600
+                    status: success
+  /recebimentos:
+    post:
+      tags:
+        - Recebimentos
+      summary: Recebimentos
+      description: >-
+        Esta rota permite consultar, de forma estruturada, **todas as cobranças
+        do tipo Comissões que já foram pagas (liquidadas)** dentro de um
+        determinado período de tempo.
+
+
+        Ela é utilizada por imobiliárias e franqueadoras para obter uma **visão
+        consolidada dos valores recebidos**, seja por um **usuário específico**
+        ou por um **grupo (equipe, unidade ou filial)**.
+
+          
+        Na prática, ela serve para responder perguntas como:
+
+
+        - **“Quais comissões eu recebi neste mês?”**
+            
+        - **“Quais cobranças geridas pela minha unidade já foram pagas?”**
+            
+        - **“Quanto cada pessoa da equipe recebeu em um determinado período?”**
+            
+
+          
+        O retorno inclui os valores totais recebidos, os dados da cobrança, o
+        cliente pagador, e a **estrutura completa do split** — detalhando quanto
+        cada favorecido recebeu, em qual conta e sob qual rede.
+
+
+        Disponível apenas para **imobiliárias** ou **franqueadoras** integradas
+        ao PipeImob.
+
+
+        ### **Parâmetros obrigatórios**
+
+
+        - dateFrom: data e hora inicial do período (**formato: YYYY-MM-DD
+        HH:mm:ss**)
+            
+        - dateTo: data e hora final do período (**formato: YYYY-MM-DD
+        HH:mm:ss**)
+            
+
+        Além do período, é necessário informar um **filtro de escopo**:
+
+
+        - user: e-mail de um usuário (traz cobranças em que ele aparece como
+        **favorecido no split**)
+            
+        - grupo: slug do grupo (traz cobranças liquidadas geridas por **usuários
+        vinculados a esse grupo**)
+            
+
+        **Importante:** envie **apenas um dos dois filtros** (user ou grupo) por
+        vez.
+
+
+        ### **Observações**
+
+
+        - O campo user espera o **e-mail completo** do usuário.
+            
+        - O campo grupo espera o **slug configurado da unidade ou grupo**.
+            
+            \- Caso não saiba o slug, entre em contato com o suporte do PipeImob.
+            
+        - A rota considera **apenas cobranças liquidadas** com tipo "Comissões".
+            
+
+        - A resposta inclui:
+            
+            - Número total de cobranças
+                
+            - Valor total recebido
+                
+            - Lista detalhada de cada cobrança com seus splits
+      operationId: recebimentos
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/recebimentos_body'
+            examples:
+              Recebimentos:
+                value: "{\r\n\"dateFrom\": \"2025-02-01 00:00:00\",\r\n\"dateTo\": \"2025-02-28 23:59:59\",\r\n\"grupo\": \"grupofilialxyz\"\r\n//\"user\": \"corretor@pipeimob.com.br\"\r\n}"
+      responses:
+        '200':
+          description: sucesso filtro user / sucesso filtro grupo
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            CF-Cache-Status:
+              schema:
+                type: string
+                example: DYNAMIC
+            CF-RAY:
+              schema:
+                type: string
+                example: 845d28b0a8cd6d4e-GIG
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Content-Encoding:
+              schema:
+                type: string
+                example: br
+            Date:
+              schema:
+                type: string
+                example: Mon, 15 Jan 2024 09:40:45 GMT
+            NEL:
+              schema:
+                type: string
+                example: '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}'
+            Report-To:
+              schema:
+                type: string
+                example: >-
+                  {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=Ouo5QJiSVW5ojNCFfrKiBKDmRlcFDIC1FgFUatuJqctVpvpwUL0LLuqIIqtfbsyM7wcVwfhHqQz41YVX5vOdMlptYocIODTvIYHyzq8VH8AoRrbplcwemM6YPsPx4xLNPWY%3D"}],"group":"cf-nel","max_age":604800}
+            Server:
+              schema:
+                type: string
+                example: cloudflare
+            Set-Cookie:
+              schema:
+                type: string
+                example: >-
+                  fluxoimobiliario_live_u2d193.sig=q0belzkTP3HZ_Wqv3rabq8bJ96M;
+                  path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure;
+                  httponly
+            Transfer-Encoding:
+              schema:
+                type: string
+                example: chunked
+            Vary:
+              schema:
+                type: string
+                example: Accept-Encoding
+            X-Bubble-Capacity-Limit:
+              schema:
+                type: string
+                example: 0 ms slower
+            X-Bubble-Capacity-Used:
+              schema:
+                type: string
+                example: 3.063 unit-seconds used
+            X-Bubble-Perf:
+              schema:
+                type: string
+                example: >-
+                  {"total":1360.6,"percents":{"top":{"bubble_cpu":52,"block":48.4,"capacity_rl":0,"other_pause":0,"pre_fiber":0.1},"sub":{"pp_userdb":31.8,"pp_wait_userdb":0,"http_request":0,"serverjson":2.5,"appserver_cache_misses_time":0,"redis":36.7,"fiber_queue":1.3,"capacity_wait":0}},"counts":{"pp_userdb":50,"http_request":0,"derived_build":0,"derived_cache_attempts":1,"derived_cache_memory_misses":1,"serverjson":200,"appserver_cache_attempts":1,"appserver_mem_cache_hits":0,"appserver_cache_hits":1,"appserver_cache_misses":0,"redis":508,"fiber_queue":458,"blocks":457},"misc":{"userdb_results":173,"userdb_data":425996,"spent_time":199082309}}
+            X-Powered-By:
+              schema:
+                type: string
+                example: Express
+            alt-svc:
+              schema:
+                type: string
+                example: h3=":443"; ma=86400
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_7'
+              examples:
+                sucesso filtro grupo:
+                  value:
+                    cobrancas:
+                      - data_criacao: 10/02/2025
+                        data_pagamento: 11/02/2025
+                        data_vencimento: 10/02/2025
+                        forma_pagamento: Pix ou Boleto
+                        pagador_cpfCnpj: '00581401905'
+                        pagador_nome: Eliane Dorfey
+                        split:
+                          - cpfCnpj: '90031782000119'
+                            email: matheus@auxiliadorapredial.com.br
+                            nome: Auxiliadora Intermediadora
+                            subconta_favorecida_agencia: auxiliadorapredialintermediadora
+                            subconta_favorecida_rede: Auxiliadora Predial
+                            valor: 2500
+                          - cpfCnpj: '46900322034'
+                            email: andrea.noble@auxiliadorapredial.com.br
+                            nome: Andréa Noble Morsch
+                            subconta_favorecida_agencia: auxiliadorapredialintermediadora
+                            subconta_favorecida_rede: Auxiliadora Predial
+                            valor: 850
+                          - cpfCnpj: '46900322034'
+                            email: andrea.noble@auxiliadorapredial.com.br
+                            nome: Andréa Noble Morsch
+                            subconta_favorecida_agencia: auxiliadorapredialintermediadora
+                            subconta_favorecida_rede: Auxiliadora Predial
+                            valor: 1650
+                        subconta_cpfCnpj: '90031782000119'
+                        subconta_criadora: Auxiliadora Intermediadora
+                        tipo_cobranca: Comissões
+                        transacao_endereco: >-
+                          Paulo Maciel, 185, 204, Cavalhada, Porto Alegre / RS,
+                          CEP 91751350
+                        transacao_gestor: andrea.noble@auxiliadorapredial.com.br
+                        transacao_uniqueid: 1736479982975x887779508479650000
+                        url_cobranca: >-
+                          https://pipeimob.auxiliadorapredial.com.br/cobranca/1739190258808x404353699598006140
+                        valor: 5000
+                      - data_criacao: 10/02/2025
+                        data_pagamento: 12/02/2025
+                        data_vencimento: 11/02/2025
+                        forma_pagamento: Pix ou Boleto
+                        pagador_cpfCnpj: '20002068087'
+                        pagador_nome: Decio Vargas da Silva
+                        split:
+                          - cpfCnpj: '80695094068'
+                            email: gerson.mello@auxiliadorapredial.com.br
+                            nome: Gerson Gonçalves de Mello
+                            subconta_favorecida_agencia: auxiliadorapredialjoaowallig
+                            subconta_favorecida_rede: Auxiliadora Predial
+                            valor: 2346
+                          - cpfCnpj: '55013414091'
+                            email: rosi.oliveira@auxiliadorapredial.com.br
+                            nome: Rosi Mari  Oliveira Ferreira
+                            subconta_favorecida_agencia: auxiliadorapredialintermediadora
+                            subconta_favorecida_rede: Auxiliadora Predial
+                            valor: 4554
+                          - cpfCnpj: '90031782000119'
+                            email: matheus@auxiliadorapredial.com.br
+                            nome: Auxiliadora Intermediadora
+                            subconta_favorecida_agencia: auxiliadorapredialintermediadora
+                            subconta_favorecida_rede: Auxiliadora Predial
+                            valor: 6900
+                        subconta_cpfCnpj: '90031782000119'
+                        subconta_criadora: Auxiliadora Intermediadora
+                        tipo_cobranca: Comissões
+                        transacao_endereco: >-
+                          Juruá, 248, Jardim São Pedro, Porto Alegre - RS, CEP
+                          91040220
+                        transacao_gestor: rosi.oliveira@auxiliadorapredial.com.br
+                        transacao_uniqueid: 1738599401295x132373024253411330
+                        url_cobranca: >-
+                          https://pipeimob.auxiliadorapredial.com.br/cobranca/1739218978151x905903569504816300
+                        valor: 13800
+                      - data_criacao: 24/02/2025
+                        data_pagamento: 25/02/2025
+                        data_vencimento: 24/02/2025
+                        forma_pagamento: Pix ou Boleto
+                        pagador_cpfCnpj: '98764381072'
+                        pagador_nome: Fernanda Santos Escopelli
+                        split:
+                          - cpfCnpj: '88330150097'
+                            email: alvaro.pezzi@auxiliadorapredial.com.br
+                            nome: Alvaro  Pezzi
+                            subconta_favorecida_agencia: auxiliadorapredialparquegermania
+                            subconta_favorecida_rede: Auxiliadora Predial
+                            valor: 1500
+                          - cpfCnpj: '90031782000119'
+                            email: matheus@auxiliadorapredial.com.br
+                            nome: Auxiliadora Intermediadora
+                            subconta_favorecida_agencia: auxiliadorapredialintermediadora
+                            subconta_favorecida_rede: Auxiliadora Predial
+                            valor: 16500
+                          - cpfCnpj: '47709987087'
+                            email: lucimara.kipper@auxiliadorapredial.com.br
+                            nome: Lucimara  Kipper
+                            subconta_favorecida_agencia: auxiliadorapredialintermediadora
+                            subconta_favorecida_rede: Auxiliadora Predial
+                            valor: 9900
+                          - cpfCnpj: '47735295049'
+                            email: tania.prates@auxiliadorapredial.com.br
+                            nome: Tânia  Prates
+                            subconta_favorecida_agencia: auxiliadorapredialintermediadora
+                            subconta_favorecida_rede: Auxiliadora Predial
+                            valor: 2100
+                        subconta_cpfCnpj: '90031782000119'
+                        subconta_criadora: Auxiliadora Intermediadora
+                        tipo_cobranca: Comissões
+                        transacao_endereco: >-
+                          BARAO DE UBA, 33, 901, Bela Vista, Porto Alegre - RS,
+                          CEP 90450-090
+                        transacao_gestor: lucimara.kipper@auxiliadorapredial.com.br
+                        transacao_uniqueid: 1738178082932x197714646790307840
+                        url_cobranca: >-
+                          https://pipeimob.auxiliadorapredial.com.br/cobranca/1740400712358x662935824272681500
+                        valor: 30000
+                      - data_criacao: 24/02/2025
+                        data_pagamento: 25/02/2025
+                        data_vencimento: 24/02/2025
+                        forma_pagamento: Pix ou Boleto
+                        pagador_cpfCnpj: '80360548091'
+                        pagador_nome: Karla Santos Escopelli
+                        split:
+                          - cpfCnpj: '47735295049'
+                            email: tania.prates@auxiliadorapredial.com.br
+                            nome: Tânia  Prates
+                            subconta_favorecida_agencia: auxiliadorapredialintermediadora
+                            subconta_favorecida_rede: Auxiliadora Predial
+                            valor: 2100
+                          - cpfCnpj: '88330150097'
+                            email: alvaro.pezzi@auxiliadorapredial.com.br
+                            nome: Alvaro  Pezzi
+                            subconta_favorecida_agencia: auxiliadorapredialparquegermania
+                            subconta_favorecida_rede: Auxiliadora Predial
+                            valor: 1500
+                          - cpfCnpj: '47709987087'
+                            email: lucimara.kipper@auxiliadorapredial.com.br
+                            nome: Lucimara  Kipper
+                            subconta_favorecida_agencia: auxiliadorapredialintermediadora
+                            subconta_favorecida_rede: Auxiliadora Predial
+                            valor: 9900
+                          - cpfCnpj: '90031782000119'
+                            email: matheus@auxiliadorapredial.com.br
+                            nome: Auxiliadora Intermediadora
+                            subconta_favorecida_agencia: auxiliadorapredialintermediadora
+                            subconta_favorecida_rede: Auxiliadora Predial
+                            valor: 16500
+                        subconta_cpfCnpj: '90031782000119'
+                        subconta_criadora: Auxiliadora Intermediadora
+                        tipo_cobranca: Comissões
+                        transacao_endereco: >-
+                          BARAO DE UBA, 33, 901, Bela Vista, Porto Alegre - RS,
+                          CEP 90450-090
+                        transacao_gestor: lucimara.kipper@auxiliadorapredial.com.br
+                        transacao_uniqueid: 1738178082932x197714646790307840
+                        url_cobranca: >-
+                          https://pipeimob.auxiliadorapredial.com.br/cobranca/1740400712629x814292460720181600
+                        valor: 30000
+                      - data_criacao: 24/02/2025
+                        data_pagamento: 26/02/2025
+                        data_vencimento: 25/02/2025
+                        forma_pagamento: Pix ou Boleto
+                        pagador_cpfCnpj: '44270011068'
+                        pagador_nome: JAIR JOSÉ PERIN
+                        split:
+                          - cpfCnpj: '42120489068'
+                            email: paulo.borba@auxiliadorapredial.com.br
+                            nome: Paulo Borba
+                            subconta_favorecida_agencia: auxiliadorapredialintermediadora
+                            subconta_favorecida_rede: Auxiliadora Predial
+                            valor: 14322
+                          - cpfCnpj: '88330150097'
+                            email: alvaro.pezzi@auxiliadorapredial.com.br
+                            nome: Alvaro  Pezzi
+                            subconta_favorecida_agencia: auxiliadorapredialparquegermania
+                            subconta_favorecida_rede: Auxiliadora Predial
+                            valor: 2170
+                          - cpfCnpj: '47735295049'
+                            email: tania.prates@auxiliadorapredial.com.br
+                            nome: Tânia  Prates
+                            subconta_favorecida_agencia: auxiliadorapredialintermediadora
+                            subconta_favorecida_rede: Auxiliadora Predial
+                            valor: 3038
+                          - cpfCnpj: '90031782000119'
+                            email: matheus@auxiliadorapredial.com.br
+                            nome: Auxiliadora Intermediadora
+                            subconta_favorecida_agencia: auxiliadorapredialintermediadora
+                            subconta_favorecida_rede: Auxiliadora Predial
+                            valor: 23870
+                        subconta_cpfCnpj: '90031782000119'
+                        subconta_criadora: Auxiliadora Intermediadora
+                        tipo_cobranca: Comissões
+                        transacao_endereco: >-
+                          Rua Santa Cecília, 1665, 802, Rio Branco, Porto Alegre
+                          - RS, CEP 90420041
+                        transacao_gestor: paulo.borba@auxiliadorapredial.com.br
+                        transacao_uniqueid: 1740428886081x849342571949850600
+                        url_cobranca: >-
+                          https://pipeimob.auxiliadorapredial.com.br/cobranca/1740431446215x187995534481870900
+                        valor: 43400
+                    cobrancas_count: 5
+                    dateFrom: 01/02/2025
+                    dateTo: 28/02/2025
+                    grupo: petropolisa
+                    recebimento_total: 122200
+                sucesso filtro user:
+                  value:
+                    cobrancas:
+                      - data_criacao: 03/01/2025
+                        data_pagamento: 04/02/2025
+                        data_vencimento: 05/02/2025
+                        forma_pagamento: Pix ou Boleto
+                        pagador_cpfCnpj: '48910230056'
+                        pagador_nome: André Souza Batista
+                        split:
+                          - cpfCnpj: '12345678000195'
+                            email: financeiro@imobmax.com.br
+                            nome: ImobMax Consultoria
+                            valor: 7500
+                          - cpfCnpj: '98765432100'
+                            email: joana.martins@exemploimobiliaria.com.br
+                            nome: Joana Martins
+                            valor: 4500
+                          - cpfCnpj: '10293847561'
+                            email: marta.silva@exemploimobiliaria.com.br
+                            nome: Marta Silva
+                            valor: 2500
+                        subconta_cpfCnpj: '12345678000195'
+                        subconta_criadora: ImobMax Consultoria
+                        tipo_cobranca: Comissões
+                        transacao_endereco: >-
+                          Rua das Laranjeiras, 134, Apto 702, Centro,
+                          Florianópolis - SC, CEP 88010-450
+                        transacao_gestor: marta.silva@exemploimobiliaria.com.br
+                        transacao_uniqueid: 1739282712893x183746920374829100
+                        url_cobranca: >-
+                          https://api.imobmax.com.br/cobranca/1741122334455x789001122334455600
+                        valor: 14500
+                      - data_criacao: 10/01/2025
+                        data_pagamento: 15/02/2025
+                        data_vencimento: 15/02/2025
+                        forma_pagamento: Pix ou Boleto
+                        pagador_cpfCnpj: '56789012345'
+                        pagador_nome: Luiza Ferreira Costa
+                        split:
+                          - cpfCnpj: '74583926000109'
+                            email: contato@alphaimoveis.com.br
+                            nome: Alpha Imóveis LTDA
+                            valor: 4200
+                          - cpfCnpj: '98765432100'
+                            email: joana.martins@exemploimobiliaria.com.br
+                            nome: Joana Martins
+                            valor: 2400
+                          - cpfCnpj: '56473829100'
+                            email: carla.ferreira@alphaimoveis.com.br
+                            nome: Carla Ferreira
+                            valor: 2600
+                        subconta_cpfCnpj: '74583926000109'
+                        subconta_criadora: Alpha Imóveis LTDA
+                        tipo_cobranca: Comissões
+                        transacao_endereco: >-
+                          Av. Brasil, 980, Casa 4, Jardim América, Goiânia - GO,
+                          CEP 74820-040
+                        transacao_gestor: carla.ferreira@alphaimoveis.com.br
+                        transacao_uniqueid: 1741109238483x998877665544332211
+                        url_cobranca: >-
+                          https://api.alphaimoveis.com.br/cobranca/1741987766554x112233445566778800
+                        valor: 9200
+                      - data_criacao: 05/02/2025
+                        data_pagamento: 21/02/2025
+                        data_vencimento: 20/02/2025
+                        forma_pagamento: Pix ou Boleto
+                        pagador_cpfCnpj: '99887766554'
+                        pagador_nome: Ricardo Teixeira Alves
+                        split:
+                          - cpfCnpj: '55667788000122'
+                            email: atendimento@vivazimoveis.com.br
+                            nome: Vivaz Negócios Imobiliários
+                            valor: 2800
+                          - cpfCnpj: '98765432100'
+                            email: joana.martins@exemploimobiliaria.com.br
+                            nome: Joana Martins
+                            valor: 1350.4
+                          - cpfCnpj: '12312312312'
+                            email: eduardo.lima@vivazimoveis.com.br
+                            nome: Eduardo Lima
+                            valor: 3150
+                        subconta_cpfCnpj: '55667788000122'
+                        subconta_criadora: Vivaz Negócios Imobiliários
+                        tipo_cobranca: Comissões
+                        transacao_endereco: >-
+                          Rua das Palmeiras, 1800, Apto 1203, Copacabana, Rio de
+                          Janeiro - RJ, CEP 22071-060
+                        transacao_gestor: eduardo.lima@vivazimoveis.com.br
+                        transacao_uniqueid: 1741888444221x112211223344556600
+                        url_cobranca: >-
+                          https://api.vivazimoveis.com.br/cobranca/1741998877998x223344556677889900
+                        valor: 7300
+                    cobrancas_count: 3
+                    dateFrom: 01/02/2025
+                    dateTo: 28/02/2025
+                    recebimento_user: 8250.4
+                    user: joana.martins@exemploimobiliaria.com.br
+  /agencias:
+    post:
+      tags:
+        - Agências
+      summary: Recuperar Agências
+      description: "### **📄\_ Descrição**\n\nEssa rota retorna a lista de agências vinculadas a uma franqueadora ou parceiro autorizado. Ela é restrita: **não pode ser acessada diretamente por agências**.\n\nO objetivo principal é fornecer uma visão centralizada das agências da rede, com metadados relevantes para análise e controle da franqueadora — incluindo configurações específicas de **royalties** aplicados a cada tipo de transação: _lançamento_, _terceiros_ e _locação_.\n\n### **🔐\_Permissões**\n\n- **Acesso permitido somente para:**\n    \n    - Usuários com perfil de **Franqueadora**.\n        \n    - **Parceiros externos** homologados.\n        \n    \n\n### **📥\_ Parâmetros**\n\nNenhum parâmetro é necessário para a requisição.\n\n### **📤\_ Resposta**\n\nO retorno é um objeto JSON contendo:\n\n- tipoUser: identifica o tipo de usuário que fez a requisição (\"franquia\" ou outro parceiro autorizado).\n    \n- agencias_count: total de agências retornadas.\n    \n- agencias: array com os dados de cada agência, incluindo:\n    \n    - nome: Nome da agência.\n        \n    - rede: Nome da rede à qual a agência pertence.\n        \n    - slug: Identificador único no sistema.\n        \n    - prefixo_codigo_contrato: Código usado na composição dos contratos.\n        \n    - uniqueid: Identificador único no banco de dados.\n        \n    - royalties: Objeto com os percentuais configurados para lancamento, terceiros e locacao."
+      operationId: recuperarAgNcias
+      requestBody:
+        content:
+          application/json:
+            examples:
+              Recuperar Agências:
+                value: ''
+      responses:
+        '200':
+          description: sucesso
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            CF-Cache-Status:
+              schema:
+                type: string
+                example: DYNAMIC
+            CF-RAY:
+              schema:
+                type: string
+                example: 845d28b0a8cd6d4e-GIG
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Content-Encoding:
+              schema:
+                type: string
+                example: br
+            Date:
+              schema:
+                type: string
+                example: Mon, 15 Jan 2024 09:40:45 GMT
+            NEL:
+              schema:
+                type: string
+                example: '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}'
+            Report-To:
+              schema:
+                type: string
+                example: >-
+                  {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=Ouo5QJiSVW5ojNCFfrKiBKDmRlcFDIC1FgFUatuJqctVpvpwUL0LLuqIIqtfbsyM7wcVwfhHqQz41YVX5vOdMlptYocIODTvIYHyzq8VH8AoRrbplcwemM6YPsPx4xLNPWY%3D"}],"group":"cf-nel","max_age":604800}
+            Server:
+              schema:
+                type: string
+                example: cloudflare
+            Set-Cookie:
+              schema:
+                type: string
+                example: >-
+                  fluxoimobiliario_live_u2d193.sig=q0belzkTP3HZ_Wqv3rabq8bJ96M;
+                  path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure;
+                  httponly
+            Transfer-Encoding:
+              schema:
+                type: string
+                example: chunked
+            Vary:
+              schema:
+                type: string
+                example: Accept-Encoding
+            X-Bubble-Capacity-Limit:
+              schema:
+                type: string
+                example: 0 ms slower
+            X-Bubble-Capacity-Used:
+              schema:
+                type: string
+                example: 3.063 unit-seconds used
+            X-Bubble-Perf:
+              schema:
+                type: string
+                example: >-
+                  {"total":1360.6,"percents":{"top":{"bubble_cpu":52,"block":48.4,"capacity_rl":0,"other_pause":0,"pre_fiber":0.1},"sub":{"pp_userdb":31.8,"pp_wait_userdb":0,"http_request":0,"serverjson":2.5,"appserver_cache_misses_time":0,"redis":36.7,"fiber_queue":1.3,"capacity_wait":0}},"counts":{"pp_userdb":50,"http_request":0,"derived_build":0,"derived_cache_attempts":1,"derived_cache_memory_misses":1,"serverjson":200,"appserver_cache_attempts":1,"appserver_mem_cache_hits":0,"appserver_cache_hits":1,"appserver_cache_misses":0,"redis":508,"fiber_queue":458,"blocks":457},"misc":{"userdb_results":173,"userdb_data":425996,"spent_time":199082309}}
+            X-Powered-By:
+              schema:
+                type: string
+                example: Express
+            alt-svc:
+              schema:
+                type: string
+                example: h3=":443"; ma=86400
+          content:
+            text/plain:
+              examples:
+                sucesso:
+                  value: |-
+                    {
+                        "tipoUser": "franquia",
+                        "agencias_count": 2,
+                        "agencias": [
+                            {
+                                "nome": "Primeira Imobiliária",
+                                "rede": "Rede Pipeimob",
+                                "slug": "primeiraimobiliaria",
+                                "prefixo_codigo_contrato": "XYZ",
+                                "uniqueid": "1687183358632x609592893275812100",
+                                "royalties": {
+                                    "lancamento": 0.0500,
+                                    "terceiros": 0.0900,
+                                    "locacao": 0.1200
+                                }
+                            },
+                            {
+                                "nome": "Segunda Imobiliária",
+                                "rede": "Rede Pipeimob",
+                                "slug": "segundaimobiliaria",
+                                "prefixo_codigo_contrato": "ZIU",
+                                "uniqueid": "1687198998632x609592893275812100",
+                                "royalties": {
+                                    "lancamento": 0.0600,
+                                    "terceiros": 0.0900,
+                                    "locacao": 0.1300
+                                }
+                            },
+                        ]
+                    }
+components:
+  schemas:
+    auth_body:
+      type: object
+      properties:
+        api_key:
+          type: string
+          example: 00000000-0000-0000-0000-000000000000
+        api_secret:
+          type: string
+          example: '000000000000000000000000000000000000000000000000000000000'
+    inline_response_200:
+      type: object
+      properties:
+        response:
+          type: object
+          properties:
+            error:
+              type: boolean
+              example: false
+            expires:
+              type: number
+              example: 3600
+            message:
+              type: string
+              example: >-
+                Problemas com suas credenciais API. Verifique e tente
+                novamente. 
+            token:
+              type: string
+              example: seu_token
+        status:
+          type: string
+          example: success
+    inline_response_200_1:
+      type: object
+      properties:
+        agencia:
+          type: string
+          example: Nome da agência
+        response:
+          type: object
+          properties:
+            error_detected:
+              type: boolean
+              example: true
+            error_message:
+              type: string
+              example: Token inválido ou não encontrado
+        status:
+          type: string
+          example: success
+        total_usuarios:
+          type: number
+          example: 20
+        usuarios:
+          type: array
+          example:
+            - agencia: Nome da agência
+              aprovado: true
+              celular: '85999998888'
+              cpf: '32165498700'
+              creci_data_assinatura: ''
+              creci_estagiario: false
+              creci_numero: ''
+              crm_id: ''
+              data_associacao: ''
+              data_criacao_usuario: '2023-07-31T14:18:49.759Z'
+              data_distrato: ''
+              data_nascimento: '1970-11-09T03:00:00.000Z'
+              email: claudio@pipeimob.com.br
+              email_pessoal: ''
+              endereco_bairro: Nome do bairro
+              endereco_cep: '60000000'
+              endereco_cidade: Fortaleza
+              endereco_complemento: ''
+              endereco_logradouro: Rua Onde Reside
+              endereco_numero: '777'
+              endereco_uf: CE
+              estadocivil: ''
+              facebook: ''
+              filial_a_que_pertence: ''
+              instagram: ''
+              is_team_leader: true
+              linkedin: ''
+              nome: Claudio
+              nome_completo: Claudio Eden
+              perfil: Gestor
+              pj_cnpj: ''
+              pj_razao_social: ''
+              rg: '11223344556'
+              sobrenome: Eden
+              ultimo_acesso: '2024-03-19T12:08:19.983Z'
+              uniqueid: 1723660753462x533041104715038100
+              who_is_team_leader: ''
+          items:
+            type: object
+            properties:
+              agencia:
+                type: string
+                example: Nome da agência
+              aprovado:
+                type: boolean
+                example: true
+              celular:
+                type: string
+                example: '85999998888'
+              cpf:
+                type: string
+                example: '32165498700'
+              creci_data_assinatura:
+                type: string
+                example: ''
+              creci_estagiario:
+                type: boolean
+                example: false
+              creci_numero:
+                type: string
+                example: ''
+              crm_id:
+                type: string
+                example: ''
+              data_associacao:
+                type: string
+                example: ''
+              data_criacao_usuario:
+                type: string
+                example: '2023-07-31T14:18:49.759Z'
+              data_distrato:
+                type: string
+                example: ''
+              data_nascimento:
+                type: string
+                example: '1970-11-09T03:00:00.000Z'
+              email:
+                type: string
+                example: claudio@pipeimob.com.br
+              email_pessoal:
+                type: string
+                example: ''
+              endereco_bairro:
+                type: string
+                example: Nome do bairro
+              endereco_cep:
+                type: string
+                example: '60000000'
+              endereco_cidade:
+                type: string
+                example: Fortaleza
+              endereco_complemento:
+                type: string
+                example: ''
+              endereco_logradouro:
+                type: string
+                example: Rua Onde Reside
+              endereco_numero:
+                type: string
+                example: '777'
+              endereco_uf:
+                type: string
+                example: CE
+              estadocivil:
+                type: string
+                example: ''
+              facebook:
+                type: string
+                example: ''
+              filial_a_que_pertence:
+                type: string
+                example: ''
+              instagram:
+                type: string
+                example: ''
+              is_team_leader:
+                type: boolean
+                example: true
+              linkedin:
+                type: string
+                example: ''
+              nome:
+                type: string
+                example: Claudio
+              nome_completo:
+                type: string
+                example: Claudio Eden
+              perfil:
+                type: string
+                example: Gestor
+              pj_cnpj:
+                type: string
+                example: ''
+              pj_razao_social:
+                type: string
+                example: ''
+              rg:
+                type: string
+                example: '11223344556'
+              sobrenome:
+                type: string
+                example: Eden
+              ultimo_acesso:
+                type: string
+                example: '2024-03-19T12:08:19.983Z'
+              uniqueid:
+                type: string
+                example: 1723660753462x533041104715038100
+              who_is_team_leader:
+                type: string
+                example: ''
+    user_aprovacao_body:
+      type: object
+      properties:
+        aprovado:
+          type: boolean
+          example: false
+        user_uniqueid:
+          type: string
+          example: 1713295578330x739397057760063200
+    inline_response_200_2:
+      type: object
+      properties:
+        response:
+          type: object
+          properties:
+            error_detected:
+              type: boolean
+              example: true
+            error_message:
+              type: string
+              example: Token inválido ou não encontrado
+            message:
+              type: string
+              example: >-
+                Configuração do usuário definida por rota de API, através de
+                credenciais do usuário João da Silva. O status de aprovação do
+                usuário era APROVADO, passando agora a ser REPROVADO
+        status:
+          type: string
+          example: success
+    negocios_body:
+      type: object
+      properties:
+        date_final:
+          type: string
+          example: '2024-02-30 23:59:59'
+        date_initial:
+          type: string
+          example: '2024-01-01 00:00:00'
+    inline_response_200_3:
+      type: object
+      properties:
+        data_fim:
+          type: string
+          example: 15/03/2024
+        data_inicio:
+          type: string
+          example: 15/03/2024
+        franqueadora:
+          type: string
+          example: Franqueadora da Agência
+        response:
+          type: object
+          properties:
+            error_detected:
+              type: boolean
+              example: true
+            error_message:
+              type: string
+              example: >-
+                Datas de início ou final da requisição não especificadas, ou
+                período superior a 31 dias
+        status:
+          type: string
+          example: success
+        total_transacoes:
+          type: number
+          example: 6
+        transacoes:
+          type: array
+          example:
+            - agencia: Imobiliária de Teste PipeImob
+              agencia_tipo: Própria
+              agencia_uniqueId: 1694520784344x804727749333221400
+              agente_gestor: João da Silva
+              agente_gestor_email: joaodasilva@imobiliaria.com.br
+              agente_gestor_grupo_filial: ''
+              agente_gestor_grupos_a_que_pertence: []
+              area_total: 125.53
+              area_util: 95.58
+              arquivamento_motivo_geral: ''
+              categoria: ''
+              cobrancas_bancarias:
+                - data_criacao: 13/03/2024
+                  data_pagamento: 15/03/2024
+                  data_vencimento: 14/03/2024
+                  forma_pagamento: Boleto Bancário
+                  pagador_cpfCnpj: 026.603.710-08
+                  pagador_nome: Pagador da Silveira
+                  split:
+                    - cpfCnpj: 466.339.940-10
+                      nome: Primeiro Splitado
+                      valor: 1870
+                    - cpfCnpj: 820.507.560-38
+                      nome: Segundo Splitado
+                      valor: 3630
+                    - cpfCnpj: 32.598.126/0001-04
+                      nome: Terceiro Splitado
+                      valor: 5495
+                  subconta_cpfCnpj: 50.199.172/0001-04
+                  subconta_criadora: PipeImob Geradora
+                  tipo_cobranca: Comissões
+                  url_cobranca: >-
+                    https://pipeimob.com.br/cobranca/1710352030860x297263654623132132
+                  valor: 11000
+              codigo_contrato: AET391113_1
+              codigo_imovel: '391113'
+              comissionados:
+                - comissionado_PJ_corretor: false
+                  comissionado_agencia: false
+                  comissionado_corretor: true
+                  comissionado_cpfCnpj: 967.116.550-87
+                  comissionado_filial: false
+                  comissionado_franqueadora: false
+                  comissionado_nome: João da Silva
+                  comissionado_parceiroExterno: false
+                  comissionado_tipo_participacao: Corretor Vendedor
+                  comissionado_uniqueId: 1709575928002x478640290628542100
+                  comissionado_valor: 9900
+                - comissionado_PJ_corretor: false
+                  comissionado_agencia: false
+                  comissionado_corretor: true
+                  comissionado_cpfCnpj: 683.108.340-47
+                  comissionado_filial: false
+                  comissionado_franqueadora: false
+                  comissionado_nome: Maria Braga
+                  comissionado_parceiroExterno: false
+                  comissionado_tipo_participacao: Corretor Agenciador
+                  comissionado_uniqueId: 1709575929461x270526476713047070
+                  comissionado_valor: 5100
+                - comissionado_PJ_corretor: false
+                  comissionado_agencia: true
+                  comissionado_corretor: false
+                  comissionado_cpfCnpj: 50.199.172/0001-04
+                  comissionado_filial: false
+                  comissionado_franqueadora: false
+                  comissionado_nome: Imobiliária Teste PipeImob
+                  comissionado_parceiroExterno: false
+                  comissionado_tipo_participacao: Imobiliária
+                  comissionado_uniqueId: 1709575931551x532630716762829700
+                  comissionado_valor: 15000
+              data_arquivamento_finalizada: ''
+              data_captacao: 08/11/2022
+              data_contrato: 15/03/2024
+              data_entrega_chaves_posse: ''
+              data_registro_publico: ''
+              data_submissao_proposta: ''
+              diasemestoque: 482
+              endereco_bairro: Rio Branco
+              endereco_cep: '90640001'
+              endereco_cidade: Porto Alegre
+              endereco_complemento: Apt 123
+              endereco_completo: >-
+                VICENTE DA FONTOURA, 199, Apt 123, Rio Branco, Porto Alegre /
+                RS, CEP 90640001
+              endereco_logradouro: VICENTE DA FONTOURA
+              endereco_numero: '199'
+              endereco_uf: RS
+              etapa_atual: Solicitação de Contrato
+              financiamento: true
+              financiamento_banco: ''
+              forma_pagamento:
+                - forma_pagamento_detalhes: 'TED OU PIX na assintura do contrato de compra e venda. '
+                  forma_pagamento_nome: Sinal e princípio de pagamento
+                  forma_pagamento_valor: 50000
+                - forma_pagamento_detalhes: 'TED OU PIX '
+                  forma_pagamento_nome: Recursos próprios (não FGTS) no ato do financiamento
+                  forma_pagamento_valor: 200000
+                - forma_pagamento_detalhes: 'TED OU PIX '
+                  forma_pagamento_nome: Alienação fiduciária (crédito do financiamento)
+                  forma_pagamento_valor: 250000
+              midia_origem_compradores: ''
+              midia_origem_vendedores: ''
+              parceirosExternos:
+                - parceiro_nomeFantasia: ''
+                  parceiro_nomeRazaoSocial: Imara Corretagem EIRELI
+                  parceiro_tipo: Corretor (externo)
+                - parceiro_nomeFantasia: Parceirão das Compras
+                  parceiro_nomeRazaoSocial: Parceirão das Compras LTDA
+                  parceiro_tipo: Imobiliária (parceira)
+              proprietario_cpf: 578.760.380-00
+              qtd_quartos: 3
+              qtd_vagas: 1
+              residencial_comercial: Comercial
+              team_leader: ''
+              total_comissao: 30000
+              transacao_uniqueId_pipeimob: 1695817559481x668744030924915600
+              usuarios_participantes:
+                - joaodasilva@imobiliaria.com.br
+                - mariadasilva@imobiliaria.com.br
+                - josedasilva@imobiliaria.com.br
+              valor_contrato: 500000
+          items:
+            type: object
+            properties:
+              agencia:
+                type: string
+                example: Imobiliária de Teste PipeImob
+              agencia_tipo:
+                type: string
+                example: Própria
+              agencia_uniqueId:
+                type: string
+                example: 1694520784344x804727749333221400
+              agente_gestor:
+                type: string
+                example: João da Silva
+              agente_gestor_email:
+                type: string
+                example: joaodasilva@imobiliaria.com.br
+              agente_gestor_grupo_filial:
+                type: string
+                example: ''
+              agente_gestor_grupos_a_que_pertence:
+                type: array
+                example: []
+                items: {}
+              area_total:
+                type: number
+                example: 125.53
+              area_util:
+                type: number
+                example: 95.58
+              arquivamento_motivo_geral:
+                type: string
+                example: ''
+              categoria:
+                type: string
+                example: ''
+              cobrancas_bancarias:
+                type: array
+                example:
+                  - data_criacao: 13/03/2024
+                    data_pagamento: 15/03/2024
+                    data_vencimento: 14/03/2024
+                    forma_pagamento: Boleto Bancário
+                    pagador_cpfCnpj: 026.603.710-08
+                    pagador_nome: Pagador da Silveira
+                    split:
+                      - cpfCnpj: 466.339.940-10
+                        nome: Primeiro Splitado
+                        valor: 1870
+                      - cpfCnpj: 820.507.560-38
+                        nome: Segundo Splitado
+                        valor: 3630
+                      - cpfCnpj: 32.598.126/0001-04
+                        nome: Terceiro Splitado
+                        valor: 5495
+                    subconta_cpfCnpj: 50.199.172/0001-04
+                    subconta_criadora: PipeImob Geradora
+                    tipo_cobranca: Comissões
+                    url_cobranca: >-
+                      https://pipeimob.com.br/cobranca/1710352030860x297263654623132132
+                    valor: 11000
+                items:
+                  type: object
+                  properties:
+                    data_criacao:
+                      type: string
+                      example: 13/03/2024
+                    data_pagamento:
+                      type: string
+                      example: 15/03/2024
+                    data_vencimento:
+                      type: string
+                      example: 14/03/2024
+                    forma_pagamento:
+                      type: string
+                      example: Boleto Bancário
+                    pagador_cpfCnpj:
+                      type: string
+                      example: 026.603.710-08
+                    pagador_nome:
+                      type: string
+                      example: Pagador da Silveira
+                    split:
+                      type: array
+                      example:
+                        - cpfCnpj: 466.339.940-10
+                          nome: Primeiro Splitado
+                          valor: 1870
+                        - cpfCnpj: 820.507.560-38
+                          nome: Segundo Splitado
+                          valor: 3630
+                        - cpfCnpj: 32.598.126/0001-04
+                          nome: Terceiro Splitado
+                          valor: 5495
+                      items:
+                        type: object
+                        properties:
+                          cpfCnpj:
+                            type: string
+                            example: 466.339.940-10
+                          nome:
+                            type: string
+                            example: Primeiro Splitado
+                          valor:
+                            type: number
+                            example: 1870
+                    subconta_cpfCnpj:
+                      type: string
+                      example: 50.199.172/0001-04
+                    subconta_criadora:
+                      type: string
+                      example: PipeImob Geradora
+                    tipo_cobranca:
+                      type: string
+                      example: Comissões
+                    url_cobranca:
+                      type: string
+                      example: >-
+                        https://pipeimob.com.br/cobranca/1710352030860x297263654623132132
+                    valor:
+                      type: number
+                      example: 11000
+              codigo_contrato:
+                type: string
+                example: AET391113_1
+              codigo_imovel:
+                type: string
+                example: '391113'
+              comissionados:
+                type: array
+                example:
+                  - comissionado_PJ_corretor: false
+                    comissionado_agencia: false
+                    comissionado_corretor: true
+                    comissionado_cpfCnpj: 967.116.550-87
+                    comissionado_filial: false
+                    comissionado_franqueadora: false
+                    comissionado_nome: João da Silva
+                    comissionado_parceiroExterno: false
+                    comissionado_tipo_participacao: Corretor Vendedor
+                    comissionado_uniqueId: 1709575928002x478640290628542100
+                    comissionado_valor: 9900
+                  - comissionado_PJ_corretor: false
+                    comissionado_agencia: false
+                    comissionado_corretor: true
+                    comissionado_cpfCnpj: 683.108.340-47
+                    comissionado_filial: false
+                    comissionado_franqueadora: false
+                    comissionado_nome: Maria Braga
+                    comissionado_parceiroExterno: false
+                    comissionado_tipo_participacao: Corretor Agenciador
+                    comissionado_uniqueId: 1709575929461x270526476713047070
+                    comissionado_valor: 5100
+                  - comissionado_PJ_corretor: false
+                    comissionado_agencia: true
+                    comissionado_corretor: false
+                    comissionado_cpfCnpj: 50.199.172/0001-04
+                    comissionado_filial: false
+                    comissionado_franqueadora: false
+                    comissionado_nome: Imobiliária Teste PipeImob
+                    comissionado_parceiroExterno: false
+                    comissionado_tipo_participacao: Imobiliária
+                    comissionado_uniqueId: 1709575931551x532630716762829700
+                    comissionado_valor: 15000
+                items:
+                  type: object
+                  properties:
+                    comissionado_PJ_corretor:
+                      type: boolean
+                      example: false
+                    comissionado_agencia:
+                      type: boolean
+                      example: false
+                    comissionado_corretor:
+                      type: boolean
+                      example: true
+                    comissionado_cpfCnpj:
+                      type: string
+                      example: 967.116.550-87
+                    comissionado_filial:
+                      type: boolean
+                      example: false
+                    comissionado_franqueadora:
+                      type: boolean
+                      example: false
+                    comissionado_nome:
+                      type: string
+                      example: João da Silva
+                    comissionado_parceiroExterno:
+                      type: boolean
+                      example: false
+                    comissionado_tipo_participacao:
+                      type: string
+                      example: Corretor Vendedor
+                    comissionado_uniqueId:
+                      type: string
+                      example: 1709575928002x478640290628542100
+                    comissionado_valor:
+                      type: number
+                      example: 9900
+              data_arquivamento_finalizada:
+                type: string
+                example: ''
+              data_captacao:
+                type: string
+                example: 08/11/2022
+              data_contrato:
+                type: string
+                example: 15/03/2024
+              data_entrega_chaves_posse:
+                type: string
+                example: ''
+              data_registro_publico:
+                type: string
+                example: ''
+              data_submissao_proposta:
+                type: string
+                example: ''
+              diasemestoque:
+                type: number
+                example: 482
+              endereco_bairro:
+                type: string
+                example: Rio Branco
+              endereco_cep:
+                type: string
+                example: '90640001'
+              endereco_cidade:
+                type: string
+                example: Porto Alegre
+              endereco_complemento:
+                type: string
+                example: Apt 123
+              endereco_completo:
+                type: string
+                example: >-
+                  VICENTE DA FONTOURA, 199, Apt 123, Rio Branco, Porto Alegre /
+                  RS, CEP 90640001
+              endereco_logradouro:
+                type: string
+                example: VICENTE DA FONTOURA
+              endereco_numero:
+                type: string
+                example: '199'
+              endereco_uf:
+                type: string
+                example: RS
+              etapa_atual:
+                type: string
+                example: Solicitação de Contrato
+              financiamento:
+                type: boolean
+                example: true
+              financiamento_banco:
+                type: string
+                example: ''
+              forma_pagamento:
+                type: array
+                example:
+                  - forma_pagamento_detalhes: 'TED OU PIX na assintura do contrato de compra e venda. '
+                    forma_pagamento_nome: Sinal e princípio de pagamento
+                    forma_pagamento_valor: 50000
+                  - forma_pagamento_detalhes: 'TED OU PIX '
+                    forma_pagamento_nome: Recursos próprios (não FGTS) no ato do financiamento
+                    forma_pagamento_valor: 200000
+                  - forma_pagamento_detalhes: 'TED OU PIX '
+                    forma_pagamento_nome: Alienação fiduciária (crédito do financiamento)
+                    forma_pagamento_valor: 250000
+                items:
+                  type: object
+                  properties:
+                    forma_pagamento_detalhes:
+                      type: string
+                      example: 'TED OU PIX na assintura do contrato de compra e venda. '
+                    forma_pagamento_nome:
+                      type: string
+                      example: Sinal e princípio de pagamento
+                    forma_pagamento_valor:
+                      type: number
+                      example: 50000
+              midia_origem_compradores:
+                type: string
+                example: ''
+              midia_origem_vendedores:
+                type: string
+                example: ''
+              parceirosExternos:
+                type: array
+                example:
+                  - parceiro_nomeFantasia: ''
+                    parceiro_nomeRazaoSocial: Imara Corretagem EIRELI
+                    parceiro_tipo: Corretor (externo)
+                  - parceiro_nomeFantasia: Parceirão das Compras
+                    parceiro_nomeRazaoSocial: Parceirão das Compras LTDA
+                    parceiro_tipo: Imobiliária (parceira)
+                items:
+                  type: object
+                  properties:
+                    parceiro_nomeFantasia:
+                      type: string
+                      example: ''
+                    parceiro_nomeRazaoSocial:
+                      type: string
+                      example: Imara Corretagem EIRELI
+                    parceiro_tipo:
+                      type: string
+                      example: Corretor (externo)
+              proprietario_cpf:
+                type: string
+                example: 578.760.380-00
+              qtd_quartos:
+                type: number
+                example: 3
+              qtd_vagas:
+                type: number
+                example: 1
+              residencial_comercial:
+                type: string
+                example: Comercial
+              team_leader:
+                type: string
+                example: ''
+              total_comissao:
+                type: number
+                example: 30000
+              transacao_uniqueId_pipeimob:
+                type: string
+                example: 1695817559481x668744030924915600
+              usuarios_participantes:
+                type: array
+                example:
+                  - joaodasilva@imobiliaria.com.br
+                  - mariadasilva@imobiliaria.com.br
+                  - josedasilva@imobiliaria.com.br
+                items:
+                  type: string
+                  example: joaodasilva@imobiliaria.com.br
+              valor_contrato:
+                type: number
+                example: 500000
+    comissionados_body:
+      type: object
+      properties:
+        date_final:
+          type: string
+          example: '2024-01-31 23:59:59'
+        date_initial:
+          type: string
+          example: '2024-01-01 00:00:00'
+    inline_response_200_4:
+      type: object
+      properties:
+        agencia:
+          type: string
+          example: Imobiliária Sortuda
+        comissionados:
+          type: array
+          example:
+            - comissionado_PJ_corretor: false
+              comissionado_agencia: true
+              comissionado_corretor: false
+              comissionado_cpfCnpj: 64.718.275/0001-48
+              comissionado_filial: false
+              comissionado_franqueadora: false
+              comissionado_nome: Imobiliária Sortuda
+              comissionado_parceiroExterno: false
+              comissionado_tipo_participacao: ''
+              comissionado_valor: 74466
+              transacao_codigo_contrato: APT_XPTO_CONTRACT01
+              transacao_codigo_imovel: APT_XPTO
+          items:
+            type: object
+            properties:
+              comissionado_PJ_corretor:
+                type: boolean
+                example: false
+              comissionado_agencia:
+                type: boolean
+                example: true
+              comissionado_corretor:
+                type: boolean
+                example: false
+              comissionado_cpfCnpj:
+                type: string
+                example: 64.718.275/0001-48
+              comissionado_filial:
+                type: boolean
+                example: false
+              comissionado_franqueadora:
+                type: boolean
+                example: false
+              comissionado_nome:
+                type: string
+                example: Imobiliária Sortuda
+              comissionado_parceiroExterno:
+                type: boolean
+                example: false
+              comissionado_tipo_participacao:
+                type: string
+                example: ''
+              comissionado_valor:
+                type: number
+                example: 74466
+              transacao_codigo_contrato:
+                type: string
+                example: APT_XPTO_CONTRACT01
+              transacao_codigo_imovel:
+                type: string
+                example: APT_XPTO
+        data_fim:
+          type: string
+          example: 31/01/2024
+        data_inicio:
+          type: string
+          example: 01/01/2024
+        response:
+          type: object
+          properties:
+            error_detected:
+              type: boolean
+              example: true
+            error_message:
+              type: string
+              example: Token inválido ou não encontrado
+        status:
+          type: string
+          example: success
+        total_transacoes:
+          type: number
+          example: 1
+    wf_negocios_lista_body:
+      type: object
+      properties:
+        date_last_modified:
+          type: string
+          example: '2024-09-05 23:59:59'
+    inline_response_200_5:
+      type: object
+      properties:
+        response:
+          type: object
+          properties:
+            error_detected:
+              type: boolean
+              example: true
+            error_message:
+              type: string
+              example: Token inválido ou não encontrado
+        status:
+          type: string
+          example: success
+        total_transacoes:
+          type: number
+          example: 15
+        transacoes:
+          type: array
+          example:
+            - 1658493951051x997376645325897700
+            - 1688021917223x181378675474577500
+            - 1688188440504x701448686603417100
+            - 1691555450519x324313766565675300
+            - 1696060172672x490120486688644900
+            - 1697052017167x991613815888456700
+            - 1697827800943x747690958296578000
+            - 1698147095888x668204918306766800
+            - 1698220205789x197923479117792600
+            - 1698771827118x398304023496956550
+            - 1699534366084x332344291252774600
+            - 1699534562429x333831566438458600
+            - 1699535067419x809963840857523400
+            - 1699545083770x258714356434363650
+            - 1699545135067x320952056165332800
+          items:
+            type: string
+            example: 1658493951051x997376645325897700
+        user_tipo:
+          type: string
+          example: parceiro
+    cadastrarcliente_body:
+      type: object
+      properties:
+        transacao_uniqueid:
+          type: string
+          example: 1718041798330x245542929021272060
+    inline_response_200_6:
+      type: object
+      properties:
+        response:
+          type: object
+          properties:
+            error_detected:
+              type: boolean
+              example: false
+            error_message:
+              type: string
+              example: >-
+                Cliente cadastrado na base da Pipeimob sob o uniqueId
+                1748024423643x398172086403603600
+        status:
+          type: string
+          example: success
+    recebimentos_body:
+      type: object
+      properties:
+        dateFrom:
+          type: string
+          example: '2025-02-01 00:00:00'
+        dateTo:
+          type: string
+          example: '2025-02-28 23:59:59'
+        grupo:
+          type: string
+          example: grupofilialxyz
+        user:
+          type: string
+          example: corretor@pipeimob.com.br
+    inline_response_200_7:
+      type: object
+      properties:
+        cobrancas:
+          type: array
+          example:
+            - data_criacao: 03/01/2025
+              data_pagamento: 04/02/2025
+              data_vencimento: 05/02/2025
+              forma_pagamento: Pix ou Boleto
+              pagador_cpfCnpj: '48910230056'
+              pagador_nome: André Souza Batista
+              split:
+                - cpfCnpj: '12345678000195'
+                  email: financeiro@imobmax.com.br
+                  nome: ImobMax Consultoria
+                  valor: 7500
+                - cpfCnpj: '98765432100'
+                  email: joana.martins@exemploimobiliaria.com.br
+                  nome: Joana Martins
+                  valor: 4500
+                - cpfCnpj: '10293847561'
+                  email: marta.silva@exemploimobiliaria.com.br
+                  nome: Marta Silva
+                  valor: 2500
+              subconta_cpfCnpj: '12345678000195'
+              subconta_criadora: ImobMax Consultoria
+              tipo_cobranca: Comissões
+              transacao_endereco: >-
+                Rua das Laranjeiras, 134, Apto 702, Centro, Florianópolis - SC,
+                CEP 88010-450
+              transacao_gestor: marta.silva@exemploimobiliaria.com.br
+              transacao_uniqueid: 1739282712893x183746920374829100
+              url_cobranca: >-
+                https://api.imobmax.com.br/cobranca/1741122334455x789001122334455600
+              valor: 14500
+            - data_criacao: 10/01/2025
+              data_pagamento: 15/02/2025
+              data_vencimento: 15/02/2025
+              forma_pagamento: Pix ou Boleto
+              pagador_cpfCnpj: '56789012345'
+              pagador_nome: Luiza Ferreira Costa
+              split:
+                - cpfCnpj: '74583926000109'
+                  email: contato@alphaimoveis.com.br
+                  nome: Alpha Imóveis LTDA
+                  valor: 4200
+                - cpfCnpj: '98765432100'
+                  email: joana.martins@exemploimobiliaria.com.br
+                  nome: Joana Martins
+                  valor: 2400
+                - cpfCnpj: '56473829100'
+                  email: carla.ferreira@alphaimoveis.com.br
+                  nome: Carla Ferreira
+                  valor: 2600
+              subconta_cpfCnpj: '74583926000109'
+              subconta_criadora: Alpha Imóveis LTDA
+              tipo_cobranca: Comissões
+              transacao_endereco: >-
+                Av. Brasil, 980, Casa 4, Jardim América, Goiânia - GO, CEP
+                74820-040
+              transacao_gestor: carla.ferreira@alphaimoveis.com.br
+              transacao_uniqueid: 1741109238483x998877665544332211
+              url_cobranca: >-
+                https://api.alphaimoveis.com.br/cobranca/1741987766554x112233445566778800
+              valor: 9200
+            - data_criacao: 05/02/2025
+              data_pagamento: 21/02/2025
+              data_vencimento: 20/02/2025
+              forma_pagamento: Pix ou Boleto
+              pagador_cpfCnpj: '99887766554'
+              pagador_nome: Ricardo Teixeira Alves
+              split:
+                - cpfCnpj: '55667788000122'
+                  email: atendimento@vivazimoveis.com.br
+                  nome: Vivaz Negócios Imobiliários
+                  valor: 2800
+                - cpfCnpj: '98765432100'
+                  email: joana.martins@exemploimobiliaria.com.br
+                  nome: Joana Martins
+                  valor: 1350.4
+                - cpfCnpj: '12312312312'
+                  email: eduardo.lima@vivazimoveis.com.br
+                  nome: Eduardo Lima
+                  valor: 3150
+              subconta_cpfCnpj: '55667788000122'
+              subconta_criadora: Vivaz Negócios Imobiliários
+              tipo_cobranca: Comissões
+              transacao_endereco: >-
+                Rua das Palmeiras, 1800, Apto 1203, Copacabana, Rio de Janeiro -
+                RJ, CEP 22071-060
+              transacao_gestor: eduardo.lima@vivazimoveis.com.br
+              transacao_uniqueid: 1741888444221x112211223344556600
+              url_cobranca: >-
+                https://api.vivazimoveis.com.br/cobranca/1741998877998x223344556677889900
+              valor: 7300
+          items:
+            type: object
+            properties:
+              data_criacao:
+                type: string
+                example: 03/01/2025
+              data_pagamento:
+                type: string
+                example: 04/02/2025
+              data_vencimento:
+                type: string
+                example: 05/02/2025
+              forma_pagamento:
+                type: string
+                example: Pix ou Boleto
+              pagador_cpfCnpj:
+                type: string
+                example: '48910230056'
+              pagador_nome:
+                type: string
+                example: André Souza Batista
+              split:
+                type: array
+                example:
+                  - cpfCnpj: '12345678000195'
+                    email: financeiro@imobmax.com.br
+                    nome: ImobMax Consultoria
+                    valor: 7500
+                  - cpfCnpj: '98765432100'
+                    email: joana.martins@exemploimobiliaria.com.br
+                    nome: Joana Martins
+                    valor: 4500
+                  - cpfCnpj: '10293847561'
+                    email: marta.silva@exemploimobiliaria.com.br
+                    nome: Marta Silva
+                    valor: 2500
+                items:
+                  type: object
+                  properties:
+                    cpfCnpj:
+                      type: string
+                      example: '12345678000195'
+                    email:
+                      type: string
+                      example: financeiro@imobmax.com.br
+                    nome:
+                      type: string
+                      example: ImobMax Consultoria
+                    valor:
+                      type: number
+                      example: 7500
+              subconta_cpfCnpj:
+                type: string
+                example: '12345678000195'
+              subconta_criadora:
+                type: string
+                example: ImobMax Consultoria
+              tipo_cobranca:
+                type: string
+                example: Comissões
+              transacao_endereco:
+                type: string
+                example: >-
+                  Rua das Laranjeiras, 134, Apto 702, Centro, Florianópolis -
+                  SC, CEP 88010-450
+              transacao_gestor:
+                type: string
+                example: marta.silva@exemploimobiliaria.com.br
+              transacao_uniqueid:
+                type: string
+                example: 1739282712893x183746920374829100
+              url_cobranca:
+                type: string
+                example: >-
+                  https://api.imobmax.com.br/cobranca/1741122334455x789001122334455600
+              valor:
+                type: number
+                example: 14500
+        cobrancas_count:
+          type: number
+          example: 3
+        dateFrom:
+          type: string
+          example: 01/02/2025
+        dateTo:
+          type: string
+          example: 28/02/2025
+        grupo:
+          type: string
+          example: petropolisa
+        recebimento_total:
+          type: number
+          example: 122200
+        recebimento_user:
+          type: number
+          example: 8250.4
+        user:
+          type: string
+          example: joana.martins@exemploimobiliaria.com.br
